@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Flashcards - The Intern</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #faf8f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h2 {
+            color: #1b365d;
+            margin-bottom: 5px;
+        }
+        .counter {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        /* Abas de Navegação (Decks) */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tabs button {
+            padding: 6px 12px;
+            background-color: #e2e8f0;
+            color: #1e293b;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .tabs button.active {
+            background-color: #1b365d;
+            color: white;
+        }
+        /* Painel para Adicionar/Editar Flashcard */
+        .add-card-section {
+            background-color: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 12px 15px;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .add-card-section h3 {
+            font-size: 13px;
+            color: #1b365d;
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+        .add-card-section input {
+            width: 100%;
+            padding: 7px;
+            margin-bottom: 6px;
+            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        .form-buttons {
+            display: flex;
+            gap: 6px;
+        }
+        .add-card-section button {
+            flex: 1;
+            padding: 7px;
+            background-color: #059669;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .add-card-section button.edit-btn-mode {
+            background-color: #2563eb;
+        }
+        .add-card-section button:hover {
+            opacity: 0.9;
+        }
+        /* Estilo do Flashcard */
+        .flashcard {
+            width: 400px;
+            min-height: 240px;
+            background-color: #ffffff;
+            border: 3px solid #336699;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            margin-bottom: 10px;
+            position: relative;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+        .flashcard.show-back {
+            background-color: #336699;
+            color: #ffffff;
+            border-color: #1b365d;
+        }
+        .tag {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            opacity: 0.8;
+            font-weight: bold;
+        }
+        .content {
+            font-size: 16px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .card-image {
+            max-width: 100%;
+            max-height: 90px;
+            border-radius: 5px;
+            margin-top: 6px;
+            object-fit: contain;
+        }
+        /* Botão de Áudio */
+        .audio-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background-color 0.2s;
+        }
+        .audio-btn:hover {
+            background-color: #1d4ed8;
+        }
+        .instructions {
+            font-size: 11px;
+            color: #777;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        .controls {
+            display: flex;
+            gap: 8px;
+            width: 400px;
+            margin-bottom: 8px;
+        }
+        .controls button {
+            flex: 1;
+            padding: 8px;
+            background-color: #1b365d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .controls button:hover {
+            background-color: #336699;
+        }
+        /* Ações de Revisão Espaçada e Edição */
+        .action-row {
+            display: flex;
+            gap: 5px;
+            width: 400px;
+            margin-bottom: 6px;
+        }
+        .action-row button {
+            flex: 1;
+            padding: 6px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+        }
+        .btn-archive { background-color: #d97706; }
+        .btn-archive:hover { background-color: #b45309; }
+        
+        .btn-edit-card { background-color: #4f46e5; }
+        .btn-edit-card:hover { background-color: #4338ca; }
+
+        .empty-state {
+            font-style: italic;
+            color: #888;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>The Intern - Flashcard App</h2>
+    <div class="counter" id="cardCounter">Card 1 of 1</div>
+
+    <!-- Abas para alternar entre os Decks -->
+    <div class="tabs">
+        <button id="tab-study" onclick="switchDeck('study')" class="active">Study Deck</button>
+        <button id="tab-nextWeek" onclick="switchDeck('nextWeek')">Next Week</button>
+        <button id="tab-nextMonth" onclick="switchDeck('nextMonth')">Next Month</button>
+        <button id="tab-timeToTime" onclick="switchDeck('timeToTime')">Time to Time</button>
+    </div>
+
+    <!-- Menu para Adicionar / Editar Flashcard -->
+    <div class="add-card-section">
+        <h3 id="formTitle">➕ Add New Flashcard</h3>
+        <input type="text" id="newFront" placeholder="Front (e.g., Achievement)...">
+        <input type="text" id="newBack" placeholder="Back (e.g., A successful result)...">
+        <input type="text" id="newImage" placeholder="Image URL (Optional)">
+        <div class="form-buttons">
+            <button id="saveBtn" onclick="saveCard()">Save New Card</button>
+            <button id="cancelEditBtn" onclick="cancelEdit()" style="display:none; background-color: #64748b;">Cancel</button>
+        </div>
+    </div>
+    
+    <div class="flashcard" id="card" onclick="toggleCard()">
+        <button class="audio-btn" onclick="speakCurrent(event)" title="Listen Pronunciation">🔊</button>
+        <span class="tag" id="cardTag">Front (Question)</span>
+        <div class="content" id="cardContent">Carregando...</div>
+        <div id="imageContainer"></div>
+    </div>
+
+    <div class="instructions">Click on the card to flip • Audio plays automatically</div>
+
+    <div class="controls">
+        <button onclick="prevCard(event)">Previous</button>
+        <button onclick="nextCard(event)">Next</button>
+    </div>
+
+    <!-- Ações de Edição e Revisão Espaçada -->
+    <div class="action-row">
+        <button class="btn-edit-card" onclick="loadCardForEditing()">✏️ Edit Current Card</button>
+    </div>
+    <div class="action-row" id="archiveButtons">
+        <button class="btn-archive" onclick="moveToDeck('nextWeek')">📅 Next Week</button>
+        <button class="btn-archive" onclick="moveToDeck('nextMonth')">🗓️ Next Month</button>
+        <button class="btn-archive" onclick="moveToDeck('timeToTime')">🔄 Time to Time</button>
+    </div>
+
+    <script>
+        let decks = {
+            study: [
+                { front: "Achievement", back: "A thing done successfully, typically by effort, courage, or skill.", image: "" },
+                { front: "When do we use the Simple Present tense?", back: "For permanent facts, general truths, and daily routines or habits.", image: "" }
+            ],
+            nextWeek: [],
+            nextMonth: [],
+            timeToTime: []
+        };
+
+        let currentDeckKey = 'study';
+        let currentIndex = 0;
+        let showingBack = false;
+        let editingIndex = null; // Controla se estamos editando um cartão
+
+        const card = document.getElementById("card");
+        const cardTag = document.getElementById("cardTag");
+        const cardContent = document.getElementById("cardContent");
+        const imageContainer = document.getElementById("imageContainer");
+        const cardCounter = document.getElementById("cardCounter");
+        
+        const newFrontInput = document.getElementById("newFront");
+        const newBackInput = document.getElementById("newBack");
+        const newImageInput = document.getElementById("newImage");
+        const formTitle = document.getElementById("formTitle");
+        const saveBtn = document.getElementById("saveBtn");
+        const cancelEditBtn = document.getElementById("cancelEditBtn");
+
+        function switchDeck(deckKey) {
+            currentDeckKey = deckKey;
+            currentIndex = 0;
+            showingBack = false;
+            cancelEdit();
+
+            document.querySelectorAll('.tabs button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab-' + deckKey).classList.add('active');
+            updateView();
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function updateView() {
+            let activeDeck = decks[currentDeckKey];
+            card.classList.remove("show-back");
+            showingBack = false;
+
+            if (activeDeck.length === 0) {
+                cardTag.innerText = "Empty Deck";
+                cardContent.innerHTML = "<span class='empty-state'>No cards in this section yet!</span>";
+                imageContainer.innerHTML = "";
+                cardCounter.innerText = "Card 0 of 0";
+                return;
+            }
+
+            if (currentIndex >= activeDeck.length) {
+                currentIndex = 0;
+            }
+
+            const currentCard = activeDeck[currentIndex];
+            cardTag.innerText = "Front (Question)";
+            cardContent.innerText = currentCard.front;
+            
+            if (currentCard.image && currentCard.image.trim() !== "") {
+                imageContainer.innerHTML = `<img src="${currentCard.image}" class="card-image" alt="Card Image">`;
+            } else {
+                imageContainer.innerHTML = "";
+            }
+
+            cardCounter.innerText = `Card ${currentIndex + 1} of ${activeDeck.length} (${currentDeckKey.toUpperCase()})`;
+            speakText(currentCard.front);
+        }
+
+        function toggleCard() {
+            let activeDeck = decks[currentDeckKey];
+            if (activeDeck.length === 0) return;
+
+            const currentCard = activeDeck[currentIndex];
+
+            if (!showingBack) {
+                card.classList.add("show-back");
+                cardTag.innerText = "Back (Answer)";
+                cardContent.innerText = currentCard.back;
+                imageContainer.innerHTML = ""; 
+                showingBack = true;
+                speakText(currentCard.back);
+            } else {
+                card.classList.remove("show-back");
+                cardTag.innerText = "Front (Question)";
+                cardContent.innerText = currentCard.front;
+                if (currentCard.image && currentCard.image.trim() !== "") {
+                    imageContainer.innerHTML = `<img src="${currentCard.image}" class="card-image" alt="Card Image">`;
+                }
+                showingBack = false;
+                speakText(currentCard.front);
+            }
+        }
+
+        function speakCurrent(event) {
+            event.stopPropagation();
+            let activeDeck = decks[currentDeckKey];
+            if (activeDeck.length === 0) return;
+            let textToSpeak = showingBack ? activeDeck[currentIndex].back : activeDeck[currentIndex].front;
+            speakText(textToSpeak);
+        }
+
+        function nextCard(event) {
+            event.stopPropagation();
+            let activeDeck = decks[currentDeckKey];
+            if (activeDeck.length === 0) return;
+            currentIndex = (currentIndex + 1) % activeDeck.length;
+            updateView();
+        }
+
+        function prevCard(event) {
+            event.stopPropagation();
+            let activeDeck = decks[currentDeckKey];
+            if (activeDeck.length === 0) return;
+            currentIndex = (currentIndex - 1 + activeDeck.length) % activeDeck.length;
+            updateView();
+        }
+
+        function moveToDeck(targetDeckKey) {
+            let activeDeck = decks[currentDeckKey];
+            if (activeDeck.length === 0) return;
+
+            let cardToMove = activeDeck.splice(currentIndex, 1)[0];
+            decks[targetDeckKey].push(cardToMove);
+
+            if (currentIndex >= activeDeck.length && currentIndex > 0) {
+                currentIndex--;
+            }
+
+            updateView();
+            alert(`Card moved to ${targetDeckKey}!`);
+        }
+
+        // Carrega os dados do cartão atual para o painel superior para edição
+        function loadCardForEditing() {
+            let activeDeck = decks[currentDeckKey];
+            if (activeDeck.length === 0) return;
+
+            const currentCard = activeDeck[currentIndex];
+            newFrontInput.value = currentCard.front;
+            newBackInput.value = currentCard.back;
+            newImageInput.value = currentCard.image || "";
+
+            editingIndex = currentIndex; // Marca qual cartão está sendo editado
+            formTitle.innerText = "✏️ Edit Flashcard";
+            saveBtn.innerText = "Update Card";
+            saveBtn.classList.add("edit-btn-mode");
+            cancelEditBtn.style.display = "block";
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Cancela o modo de edição
+        function cancelEdit() {
+            editingIndex = null;
+            newFrontInput.value = "";
+            newBackInput.value = "";
+            newImageInput.value = "";
+            formTitle.innerText = "➕ Add New Flashcard";
+            saveBtn.innerText = "Save New Card";
+            saveBtn.classList.remove("edit-btn-mode");
+            cancelEditBtn.style.display = "none";
+        }
+
+        // Salva (novo cartão ou atualização do cartão editado)
+        function saveCard() {
+            const frontVal = newFrontInput.value.trim();
+            const backVal = newBackInput.value.trim();
+            const imageVal = newImageInput.value.trim();
+
+            if (frontVal === "" || backVal === "") {
+                alert("Please fill in both the question and the answer!");
+                return;
+            }
+
+            let activeDeck = decks[currentDeckKey];
+
+            if (editingIndex !== null) {
+                // Atualiza o cartão existente
+                activeDeck[editingIndex] = { front: frontVal, back: backVal, image: imageVal };
+                alert("Flashcard updated successfully!");
+                cancelEdit();
+            } else {
+                // Cria um novo cartão no deck atual
+                activeDeck.push({ front: frontVal, back: backVal, image: imageVal });
+                currentIndex = activeDeck.length - 1;
+                newFrontInput.value = "";
+                newBackInput.value = "";
+                newImageInput.value = "";
+                alert("New flashcard added successfully!");
+            }
+
+            updateView();
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
