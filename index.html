@@ -831,22 +831,26 @@ const firebaseConfig = {
         };
 
         function sendLoginLink() {
-            const email = emailInput.value.trim();
-            if (!email) {
-                alert("Por favor, digite seu e-mail.");
-                return;
-            }
+    const email = emailInput.value.trim();
+    if (!email) {
+        alert("Por favor, digite seu e-mail.");
+        return;
+    }
 
-            auth.sendSignInLinkToEmail(email, actionCodeSettings)
-                .then(() => {
-                    window.localStorage.setItem('emailForSignIn', email);
-                    loginMessage.innerText = "✨ Link enviado! Verifique sua caixa de entrada e clique no link para entrar.";
-                })
-                .catch((error) => {
-                    console.error(error);
-                    alert("Erro ao enviar link: " + error.message);
-                });
-        }
+    // Salva o e-mail ANTES da requisição para garantir que fique guardado
+    window.localStorage.setItem('emailForSignIn', email);
+
+    auth.sendSignInLinkToEmail(email, actionCodeSettings)
+        .then(() => {
+            loginMessage.innerText = "✨ Link enviado! Verifique sua caixa de entrada e clique no link para entrar.";
+        })
+        .catch((error) => {
+            console.error(error);
+            // Se der erro, limpa o localStorage para não deixar dado órfão
+            window.localStorage.removeItem('emailForSignIn');
+            alert("Erro ao enviar link: " + error.message);
+        });
+}
 
         // Verifica se o usuário está abrindo a página através do Link de E-mail recebido
         if (auth.isSignInWithEmailLink(window.location.href)) {
