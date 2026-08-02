@@ -152,7 +152,6 @@
             }
         });
 
-        // Função limpa com captura de erro detalhada para sabermos exatamente se o Firebase recusar
         function loginAnonymously() {
             auth.signInAnonymously().catch((error) => {
                 console.error("Erro técnico:", error);
