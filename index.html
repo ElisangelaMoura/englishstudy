@@ -696,7 +696,7 @@
                 
                 <button class="flip-instruction-btn" onclick="toggleCard()">🔄 Flip Card (Front / Back)</button>
 
-                <div class="flashcard" id="card">
+                <div class="flashcard" id="card" onclick="toggleCard()" style="cursor: pointer;">
                     <button class="audio-btn" onclick="speakCurrent(event)" title="Listen Pronunciation">🔊</button>
                     <span class="tag" id="cardTag">Front (Question)</span>
                     <div class="content" id="cardContent">Loading...</div>
@@ -761,17 +761,16 @@
     </footer>
 
     <script>
-
-const firebaseConfig = {
-    apiKey: "AIzaSyCfuTWIEHVKwGBi0p5DipuI7BXJ0kRHG-g",
-    authDomain: "english-flashcards-system.firebaseapp.com",
-    databaseURL: "https://english-flashcards-system-default-rtdb.firebaseio.com",
-    projectId: "english-flashcards-system",
-    storageBucket: "english-flashcards-system.appspot.com",
-    messagingSenderId: "1029742136135",
-    appId: "1:1029742136135:web:f47b0b946a5b8a5bb1da62",
-    measurementId: "G-CY1D3X3E4X"
-  };
+        const firebaseConfig = {
+            apiKey: "AIzaSyCfuTWIEHVKwGBi0p5DipuI7BXJ0kRHG-g",
+            authDomain: "english-flashcards-system.firebaseapp.com",
+            databaseURL: "https://english-flashcards-system-default-rtdb.firebaseio.com",
+            projectId: "english-flashcards-system",
+            storageBucket: "english-flashcards-system.appspot.com",
+            messagingSenderId: "1029742136135",
+            appId: "1:1029742136135:web:f47b0b946a5b8a5bb1da62",
+            measurementId: "G-CY1D3X3E4X"
+        };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
@@ -826,31 +825,29 @@ const firebaseConfig = {
 
         // Configurações do Link de E-mail
         const actionCodeSettings = {
-            url: window.location.href.split('?')[0], // Retorna para a mesma página após clicar no link
+            url: window.location.href.split('?')[0],
             handleCodeInApp: true,
         };
 
         function sendLoginLink() {
-    const email = emailInput.value.trim();
-    if (!email) {
-        alert("Por favor, digite seu e-mail.");
-        return;
-    }
+            const email = emailInput.value.trim();
+            if (!email) {
+                alert("Por favor, digite seu e-mail.");
+                return;
+            }
 
-    // Salva o e-mail ANTES da requisição para garantir que fique guardado
-    window.localStorage.setItem('emailForSignIn', email);
+            window.localStorage.setItem('emailForSignIn', email);
 
-    auth.sendSignInLinkToEmail(email, actionCodeSettings)
-        .then(() => {
-            loginMessage.innerText = "✨ Link enviado! Verifique sua caixa de entrada e clique no link para entrar.";
-        })
-        .catch((error) => {
-            console.error(error);
-            // Se der erro, limpa o localStorage para não deixar dado órfão
-            window.localStorage.removeItem('emailForSignIn');
-            alert("Erro ao enviar link: " + error.message);
-        });
-}
+            auth.sendSignInLinkToEmail(email, actionCodeSettings)
+                .then(() => {
+                    loginMessage.innerText = "✨ Link enviado! Verifique sua caixa de entrada e clique no link para entrar.";
+                })
+                .catch((error) => {
+                    console.error(error);
+                    window.localStorage.removeItem('emailForSignIn');
+                    alert("Erro ao enviar link: " + error.message);
+                });
+        }
 
         // Verifica se o usuário está abrindo a página através do Link de E-mail recebido
         if (auth.isSignInWithEmailLink(window.location.href)) {
@@ -876,7 +873,6 @@ const firebaseConfig = {
                 appContent.style.display = "flex";
                 userEmailDisplay.innerText = `Conta: ${user.email}`;
 
-                // Cria uma pasta isolada no banco de dados para este usuário específico (auth.uid)
                 dbRef = db.ref(`users/${user.uid}/flashcards_data`);
                 initRealtimeSync();
             } else {
@@ -957,7 +953,6 @@ const firebaseConfig = {
                     updateView();
                     isSyncingFromCloud = false;
                 } else {
-                    // Inicializa vazio para o novo usuário se não houver dados
                     decks = { movies: [], nextWeek: [], nextMonth: [], timeToTime: [] };
                     renderMenus();
                     updateView();
