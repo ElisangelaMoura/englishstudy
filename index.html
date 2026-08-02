@@ -183,11 +183,11 @@
             }
         });
 
-        // Entrar de forma anônima
+        / Entrar de forma anônima com exibição do erro exato
         function loginAnonymously() {
             auth.signInAnonymously().catch((error) => {
-                console.error("Erro no login anônimo:", error);
-                alert("Erro ao iniciar sessão. Tente novamente.");
+                console.error("Erro completo do Firebase:", error);
+                alert("Erro Firebase: " + error.code + " - " + error.message);
             });
         }
 
