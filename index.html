@@ -23,7 +23,7 @@
             min-height: 100vh;
         }
 
-        /* Tela de Login */
+        /* Tela de Login / Cadastro */
         #login-screen {
             display: flex;
             flex-direction: column;
@@ -60,7 +60,7 @@
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             font-size: 14px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .login-card button {
             width: 100%;
@@ -72,14 +72,27 @@
             font-weight: bold;
             font-size: 14px;
             cursor: pointer;
+            margin-top: 5px;
         }
         .login-card button:hover {
             background-color: #336699;
         }
+        .login-card .btn-register {
+            background-color: #059669;
+        }
+        .login-card .btn-register:hover {
+            background-color: #047857;
+        }
+        .divider {
+            font-size: 12px;
+            color: #94a3b8;
+            margin: 12px 0;
+            font-weight: bold;
+        }
         #login-message {
             font-size: 12px;
             margin-top: 15px;
-            color: #059669;
+            color: #dc2626;
             font-weight: bold;
         }
 
@@ -115,7 +128,6 @@
             font-weight: bold;
         }
 
-        /* Restante do Design Original mantido perfeitamente */
         .welcome-banner {
             width: 100%;
             max-width: 900px;
@@ -612,13 +624,16 @@
 </head>
 <body>
 
-    <!-- TELA DE LOGIN (Link por E-mail) -->
+    <!-- TELA DE LOGIN (E-mail e Senha) -->
     <div id="login-screen">
         <div class="login-card">
             <h2>English Flashcards 🎬</h2>
-            <p>Digite seu e-mail para receber um link de acesso seguro e privado.</p>
+            <p>Entre com sua conta ou cadastre-se para acessar seus flashcards privados.</p>
             <input type="email" id="emailInput" placeholder="seu-email@exemplo.com">
-            <button onclick="sendLoginLink()">Enviar Link de Acesso</button>
+            <input type="password" id="passwordInput" placeholder="Sua senha (mínimo 6 dígitos)">
+            <button onclick="loginUser()">Entrar</button>
+            <div class="divider">ou</div>
+            <button class="btn-register" onclick="registerUser()">Criar Nova Conta</button>
             <div id="login-message"></div>
         </div>
     </div>
@@ -795,6 +810,7 @@
         const loginScreen = document.getElementById("login-screen");
         const appContent = document.getElementById("app-content");
         const emailInput = document.getElementById("emailInput");
+        const passwordInput = document.getElementById("passwordInput");
         const loginMessage = document.getElementById("login-message");
         const userEmailDisplay = document.getElementById("userEmailDisplay");
 
@@ -823,49 +839,34 @@
         const managementBox = document.getElementById("managementBox");
         const accordionIcon = document.getElementById("accordionIcon");
 
-        // Configurações do Link de E-mail
-        const actionCodeSettings = {
-            url: window.location.href.split('?')[0],
-            handleCodeInApp: true,
-        };
-
-        function sendLoginLink() {
+        function loginUser() {
             const email = emailInput.value.trim();
-            if (!email) {
-                alert("Por favor, digite seu e-mail.");
+            const password = passwordInput.value.trim();
+            if (!email || !password) {
+                loginMessage.innerText = "Preencha o e-mail e a senha.";
                 return;
             }
 
-            window.localStorage.setItem('emailForSignIn', email);
-
-            auth.sendSignInLinkToEmail(email, actionCodeSettings)
-                .then(() => {
-                    loginMessage.innerText = "✨ Link enviado! Verifique sua caixa de entrada e clique no link para entrar.";
-                })
+            auth.signInWithEmailAndPassword(email, password)
                 .catch((error) => {
-                    console.error(error);
-                    window.localStorage.removeItem('emailForSignIn');
-                    alert("Erro ao enviar link: " + error.message);
+                    loginMessage.innerText = "Erro ao entrar: " + error.message;
                 });
         }
 
-        // Verifica se o usuário está abrindo a página através do Link de E-mail recebido
-        if (auth.isSignInWithEmailLink(window.location.href)) {
-            let email = window.localStorage.getItem('emailForSignIn');
-            if (!email) {
-                email = prompt("Por favor, confirme seu e-mail para concluir o login:");
+        function registerUser() {
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            if (!email || !password) {
+                loginMessage.innerText = "Preencha o e-mail e a senha para cadastrar.";
+                return;
             }
-            auth.signInWithEmailLink(email, window.location.href)
-                .then((result) => {
-                    window.localStorage.removeItem('emailForSignIn');
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                })
+
+            auth.createUserWithEmailAndPassword(email, password)
                 .catch((error) => {
-                    alert("Erro ao concluir login com link: " + error.message);
+                    loginMessage.innerText = "Erro ao cadastrar: " + error.message;
                 });
         }
 
-        // Monitor de Autenticação do Firebase
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUser = user;
