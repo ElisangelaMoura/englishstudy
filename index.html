@@ -91,6 +91,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
         .accordion-header:hover {
             color: #336699;
@@ -150,18 +152,19 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            max-height: 420px;
+            max-height: 500px;
             overflow-y: auto;
             padding-right: 2px;
-            transition: max-height 0.3s ease, opacity 0.3s ease;
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
         }
         .management-box.collapsed {
-            max-height: 0;
+            max-height: 0 !important;
             overflow: hidden;
             opacity: 0;
             margin: 0;
             padding: 0;
             border: none;
+            pointer-events: none;
         }
         .management-box select, .management-box input, .management-box textarea {
             width: 100%;
@@ -509,15 +512,6 @@
                 width: 100%;
                 max-width: 440px;
             }
-            /* No celular, inicia recolhido para priorizar o card de estudo */
-            .management-box {
-                max-height: 0;
-                overflow: hidden;
-                opacity: 0;
-                margin: 0;
-                padding: 0;
-                border: none;
-            }
         }
     </style>
 </head>
@@ -559,7 +553,7 @@
                 <span id="formTitle">🛠️ Flashcard Management</span>
                 <span id="accordionIcon" style="font-size: 11px;">▼ Expand</span>
             </div>
-            <div class="management-box" id="managementBox">
+            <div class="management-box collapsed" id="managementBox">
                 <select id="cardMovieSelect"></select>
                 <input type="text" id="newFront" placeholder="Front (Word or Free Example)...">
                 <textarea id="newBack" rows="2" placeholder="Back explanation..."></textarea>
@@ -1083,7 +1077,6 @@
             saveBtn.classList.add("edit-mode");
             cancelEditBtn.style.display = "block";
 
-            // Abre o painel se estiver fechado para permitir edição
             if (managementBox.classList.contains("collapsed")) {
                 toggleManagementAccordion();
             }
