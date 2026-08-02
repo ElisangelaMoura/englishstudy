@@ -86,6 +86,15 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+        .accordion-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion-header:hover {
+            color: #336699;
+        }
         .deck-buttons {
             display: flex;
             flex-direction: column;
@@ -144,6 +153,15 @@
             max-height: 420px;
             overflow-y: auto;
             padding-right: 2px;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+        }
+        .management-box.collapsed {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+            border: none;
         }
         .management-box select, .management-box input, .management-box textarea {
             width: 100%;
@@ -491,6 +509,15 @@
                 width: 100%;
                 max-width: 440px;
             }
+            /* No celular, inicia recolhido para priorizar o card de estudo */
+            .management-box {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                margin: 0;
+                padding: 0;
+                border: none;
+            }
         }
     </style>
 </head>
@@ -528,8 +555,11 @@
                 <button id="tab-timeToTime" onclick="switchDeck('timeToTime')">🔄 From Time to Time</button>
             </div>
 
-            <div class="menu-section-title" id="formTitle">🛠️ Flashcard Management</div>
-            <div class="management-box">
+            <div class="menu-section-title accordion-header" onclick="toggleManagementAccordion()">
+                <span id="formTitle">🛠️ Flashcard Management</span>
+                <span id="accordionIcon" style="font-size: 11px;">▼ Expand</span>
+            </div>
+            <div class="management-box" id="managementBox">
                 <select id="cardMovieSelect"></select>
                 <input type="text" id="newFront" placeholder="Front (Word or Free Example)...">
                 <textarea id="newBack" rows="2" placeholder="Back explanation..."></textarea>
@@ -623,7 +653,6 @@
     </footer>
 
     <script>
-        // Configuração do Firebase com base no seu projeto
         const firebaseConfig = {
             apiKey: "AIzaSyCfutWIEHVKWGBi0p5DipuI7BXJ0kRHG-g",
             authDomain: "english-flashcards-system.firebaseapp.com",
@@ -673,6 +702,18 @@
         const cancelEditBtn = document.getElementById("cancelEditBtn");
         const movieDecksContainer = document.getElementById("movieDecksContainer");
         const manualModal = document.getElementById("manualModal");
+        const managementBox = document.getElementById("managementBox");
+        const accordionIcon = document.getElementById("accordionIcon");
+
+        function toggleManagementAccordion() {
+            if (managementBox.classList.contains("collapsed")) {
+                managementBox.classList.remove("collapsed");
+                accordionIcon.innerText = "▲ Collapse";
+            } else {
+                managementBox.classList.add("collapsed");
+                accordionIcon.innerText = "▼ Expand";
+            }
+        }
 
         function openManual() {
             manualModal.style.display = "flex";
@@ -1041,6 +1082,11 @@
             saveBtn.innerText = "Update";
             saveBtn.classList.add("edit-mode");
             cancelEditBtn.style.display = "block";
+
+            // Abre o painel se estiver fechado para permitir edição
+            if (managementBox.classList.contains("collapsed")) {
+                toggleManagementAccordion();
+            }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
