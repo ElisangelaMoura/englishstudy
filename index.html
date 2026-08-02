@@ -22,7 +22,7 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
 
-    <!-- TELA DE LOGIN (Aparece se o usuário não estiver logado) -->
+    <!-- TELA DE LOGIN -->
     <div id="login-screen" class="hidden w-full max-w-md bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 text-center">
         <div class="mb-6">
             <span class="text-5xl">🧠</span>
@@ -40,9 +40,8 @@
         </button>
     </div>
 
-    <!-- APLICATIVO PRINCIPAL (Oculto até o usuário fazer login) -->
+    <!-- APLICATIVO PRINCIPAL -->
     <div id="app-screen" class="hidden w-full max-w-2xl flex flex-col items-center">
-        <!-- Barra de Identificação do Usuário -->
         <div class="w-full flex justify-between items-center bg-slate-800 px-4 py-3 rounded-xl mb-4 border border-slate-700">
             <div class="flex items-center gap-3">
                 <img id="user-avatar" src="" alt="Avatar" class="w-9 h-9 rounded-full border border-slate-600">
@@ -56,7 +55,6 @@
             </button>
         </div>
 
-        <!-- Seletor de Decks / Temas -->
         <div class="w-full bg-slate-800 p-4 rounded-2xl shadow-xl border border-slate-700 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="w-full sm:w-auto flex-1">
                 <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Selecionar Tema / Deck</label>
@@ -74,21 +72,16 @@
             </div>
         </div>
 
-        <!-- Área do Flashcard Ativo -->
         <div id="flashcard-container" class="w-full flex flex-col items-center">
-            <!-- Indicador de progresso -->
             <div id="card-counter" class="text-sm font-medium text-slate-400 mb-3">Cartão 0 de 0</div>
 
-            <!-- Card com Efeito 3D -->
             <div class="perspective-1000 w-full h-80 cursor-pointer mb-6" onclick="flipCard()">
                 <div id="card-inner" class="relative w-full h-full duration-300 transform-style-3d shadow-2xl rounded-2xl">
-                    <!-- Frente (Pergunta) -->
                     <div class="absolute inset-0 w-full h-full bg-slate-800 border border-slate-700 rounded-2xl p-6 flex flex-col justify-between backface-hidden">
                         <span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Pergunta</span>
                         <div id="card-front-text" class="text-xl text-center font-medium my-auto overflow-y-auto">Carregando...</div>
                         <span class="text-xs text-slate-500 text-center">Clique para ver a resposta</span>
                     </div>
-                    <!-- Verso (Resposta) -->
                     <div class="absolute inset-0 w-full h-full bg-slate-800 border border-slate-700 rounded-2xl p-6 flex flex-col justify-between backface-hidden rotate-y-180">
                         <span class="text-xs uppercase tracking-widest text-emerald-400 font-bold">Resposta</span>
                         <div id="card-back-text" class="text-xl text-center font-medium my-auto overflow-y-auto text-emerald-300">Carregando...</div>
@@ -97,7 +90,6 @@
                 </div>
             </div>
 
-            <!-- Botões de Navegação -->
             <div class="flex gap-4 w-full">
                 <button onclick="prevCard()" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 font-medium py-3 rounded-xl transition">
                     ⬅ Anterior
@@ -141,7 +133,6 @@
     </div>
 
     <script>
-        // Configuração do Firebase preenchida com as suas chaves reais
         const firebaseConfig = {
             apiKey: "AIzaSyCfutWIEHVKWGBi0p5DipuI7BXJ0kRHG-g",
             authDomain: "english-flashcards-system.firebaseapp.com",
@@ -152,7 +143,6 @@
             appId: "1:1029742136135:web:f47b0b946a5b8a5bb1da62"
         };
 
-        // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
@@ -163,7 +153,7 @@
         let currentCardIndex = 0;
         let isFlipped = false;
 
-        // Monitorar estado de autenticação (Login / Logout)
+        // Monitorar estado de autenticação (com suporte a redirecionamento)
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUser = user;
@@ -181,27 +171,23 @@
             }
         });
 
-        // Função para logar com o Google
+        // Função para logar com o Google por Redirecionamento (Evita bloqueador de pop-up)
         function loginWithGoogle() {
             const provider = new firebase.auth.GoogleAuthProvider();
-            provider.setCustomParameters({ prompt: 'select_account' });
-            auth.signInWithPopup(provider).catch((error) => {
+            auth.signInWithRedirect(provider).catch((error) => {
                 console.error("Erro no login:", error);
                 alert("Erro ao fazer login com o Google. Tente novamente.");
             });
         }
 
-        // Função para sair
         function logout() {
             auth.signOut();
         }
 
-        // Caminho dinâmico isolado por usuário no Realtime Database
         function getUserDbRef() {
             return database.ref('users/' + currentUser.uid + '/flashcards_data');
         }
 
-        // Carregar dados do usuário logado
         function loadUserData() {
             getUserDbRef().on('value', (snapshot) => {
                 userData = snapshot.val() || {};
@@ -209,7 +195,6 @@
             });
         }
 
-        // Atualizar lista de decks no <select>
         function updateDeckSelect() {
             const select = document.getElementById("deck-select");
             select.innerHTML = "";
@@ -247,7 +232,6 @@
             renderCurrentCard();
         }
 
-        // Renderizar card atual
         function renderCurrentCard() {
             const frontEl = document.getElementById("card-front-text");
             const backEl = document.getElementById("card-back-text");
@@ -284,7 +268,6 @@
             document.getElementById("card-counter").innerText = "Cartão 0 de 0";
         }
 
-        // Virar o cartão (Efeito 3D)
         function flipCard() {
             const inner = document.getElementById("card-inner");
             isFlipped = !isFlipped;
@@ -318,7 +301,6 @@
             renderCurrentCard();
         }
 
-        // Controle dos Modais
         function openNewDeckModal() {
             document.getElementById("new-deck-name").value = "";
             document.getElementById("deck-modal").classList.remove("hidden");
@@ -339,7 +321,6 @@
             document.getElementById("card-modal").classList.add("hidden");
         }
 
-        // Salvar Novo Deck no Firebase do Usuário
         function saveNewDeck() {
             const name = document.getElementById("new-deck-name").value.trim();
             if (!name) {
@@ -356,7 +337,6 @@
             });
         }
 
-        // Salvar Novo Card no Firebase do Usuário
         function saveNewCard() {
             const front = document.getElementById("new-card-front").value.trim();
             const back = document.getElementById("new-card-back").value.trim();
