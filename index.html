@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Flashcards - Realtime Cloud Edition</title>
+    <title>English Flashcards - Private Cloud Edition</title>
     
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <style>
@@ -21,6 +22,100 @@
             align-items: center;
             min-height: 100vh;
         }
+
+        /* Tela de Login */
+        #login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .login-card h2 {
+            color: #1b365d;
+            margin-top: 0;
+            font-size: 20px;
+        }
+        .login-card p {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+        .login-card input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .login-card button {
+            width: 100%;
+            padding: 10px;
+            background-color: #1b365d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .login-card button:hover {
+            background-color: #336699;
+        }
+        #login-message {
+            font-size: 12px;
+            margin-top: 15px;
+            color: #059669;
+            font-weight: bold;
+        }
+
+        /* Conteúdo Principal (Oculto até logar) */
+        #app-content {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+        }
+        .user-bar {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #e2e8f0;
+            padding: 8px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #334155;
+            box-sizing: border-box;
+        }
+        .user-bar button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Restante do Design Original mantido perfeitamente */
         .welcome-banner {
             width: 100%;
             max-width: 900px;
@@ -517,94 +612,113 @@
 </head>
 <body>
 
-    <div class="welcome-banner">
-        <div class="welcome-text">
-            <h1>English through Contexts 🎬📚🚀</h1>
-            <p>Automatic Realtime Cloud Sync Enabled (Firebase)!</p>
+    <!-- TELA DE LOGIN (Link por E-mail) -->
+    <div id="login-screen">
+        <div class="login-card">
+            <h2>English Flashcards 🎬</h2>
+            <p>Digite seu e-mail para receber um link de acesso seguro e privado.</p>
+            <input type="email" id="emailInput" placeholder="seu-email@exemplo.com">
+            <button onclick="sendLoginLink()">Enviar Link de Acesso</button>
+            <div id="login-message"></div>
         </div>
-        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=500&q=80" alt="Studying" class="welcome-img">
     </div>
 
-    <div class="main-container">
+    <!-- CONTEÚDO PRINCIPAL (Visível apenas pós-login) -->
+    <div id="app-content">
+        <div class="user-bar">
+            <span id="userEmailDisplay">Logado</span>
+            <button onclick="logout()">Sair</button>
+        </div>
 
-        <div class="sidebar-menu">
-            <div class="menu-section-title">📖 User Guide & Science</div>
-            <div class="deck-buttons">
-                <button class="manual-btn" onclick="openManual()">💡 Open Complete Manual</button>
+        <div class="welcome-banner">
+            <div class="welcome-text">
+                <h1>English through Contexts 🎬📚🚀</h1>
+                <p>Private Cloud Storage Enabled!</p>
             </div>
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=500&q=80" alt="Studying" class="welcome-img">
+        </div>
 
-            <div class="menu-section-title" style="margin-top: 10px;">📁 Add New Theme</div>
-            <div class="movie-add-box">
-                <input type="text" id="newMovieNameInput" placeholder="Theme name (movie, book...)...">
-                <button onclick="addNewMovie()">+ Add</button>
-            </div>
+        <div class="main-container">
 
-            <div class="menu-section-title" style="margin-top: 10px;">📚 Your Theme Decks</div>
-            <div class="deck-buttons" id="movieDecksContainer"></div>
+            <div class="sidebar-menu">
+                <div class="menu-section-title">📖 User Guide & Science</div>
+                <div class="deck-buttons">
+                    <button class="manual-btn" onclick="openManual()">💡 Open Complete Manual</button>
+                </div>
 
-            <div class="menu-section-title">📅 Spaced Review</div>
-            <div class="deck-buttons">
-                <button id="tab-nextWeek" onclick="switchDeck('nextWeek')">📅 Next Week</button>
-                <button id="tab-nextMonth" onclick="switchDeck('nextMonth')">🗓️ Next Month</button>
-                <button id="tab-timeToTime" onclick="switchDeck('timeToTime')">🔄 From Time to Time</button>
-            </div>
+                <div class="menu-section-title" style="margin-top: 10px;">📁 Add New Theme</div>
+                <div class="movie-add-box">
+                    <input type="text" id="newMovieNameInput" placeholder="Theme name (movie, book...)...">
+                    <button onclick="addNewMovie()">+ Add</button>
+                </div>
 
-            <div class="menu-section-title accordion-header" onclick="toggleManagementAccordion()">
-                <span id="formTitle">🛠️ Flashcard Management</span>
-                <span id="accordionIcon" style="font-size: 11px;">▼ Expand</span>
-            </div>
-            <div class="management-box collapsed" id="managementBox">
-                <select id="cardMovieSelect"></select>
-                <input type="text" id="newFront" placeholder="Front (Word or Free Example)...">
-                <textarea id="newBack" rows="2" placeholder="Back explanation..."></textarea>
-                <textarea id="newExercise" rows="2" placeholder="Exercise sentence (Optional)..."></textarea>
-                
-                <input type="text" id="optA" placeholder="Option A (Optional)">
-                <input type="text" id="optB" placeholder="Option B (Optional)">
-                <input type="text" id="optC" placeholder="Option C (Optional)">
-                <input type="text" id="optD" placeholder="Option D (Optional)">
-                <select id="correctOption">
-                    <option value="0">Correct: Option A</option>
-                    <option value="1" selected>Correct: Option B</option>
-                    <option value="2">Correct: Option C</option>
-                    <option value="3">Correct: Option D</option>
-                </select>
+                <div class="menu-section-title" style="margin-top: 10px;">📚 Your Theme Decks</div>
+                <div class="deck-buttons" id="movieDecksContainer"></div>
 
-                <input type="text" id="newImage" placeholder="Image Link (URL - Optional)...">
-                <div class="form-buttons">
-                    <button class="main-save-btn" id="saveBtn" onclick="saveCard()">Save Card</button>
-                    <button id="cancelEditBtn" onclick="cancelEdit()" style="display:none; background-color: #64748b; color:white; border:none; border-radius:5px; padding:7px; font-size:12px; font-weight:bold; cursor:pointer;">Cancel</button>
+                <div class="menu-section-title">📅 Spaced Review</div>
+                <div class="deck-buttons">
+                    <button id="tab-nextWeek" onclick="switchDeck('nextWeek')">📅 Next Week</button>
+                    <button id="tab-nextMonth" onclick="switchDeck('nextMonth')">🗓️ Next Month</button>
+                    <button id="tab-timeToTime" onclick="switchDeck('timeToTime')">🔄 From Time to Time</button>
+                </div>
+
+                <div class="menu-section-title accordion-header" onclick="toggleManagementAccordion()">
+                    <span id="formTitle">🛠️ Flashcard Management</span>
+                    <span id="accordionIcon" style="font-size: 11px;">▼ Expand</span>
+                </div>
+                <div class="management-box collapsed" id="managementBox">
+                    <select id="cardMovieSelect"></select>
+                    <input type="text" id="newFront" placeholder="Front (Word or Free Example)...">
+                    <textarea id="newBack" rows="2" placeholder="Back explanation..."></textarea>
+                    <textarea id="newExercise" rows="2" placeholder="Exercise sentence (Optional)..."></textarea>
+                    
+                    <input type="text" id="optA" placeholder="Option A (Optional)">
+                    <input type="text" id="optB" placeholder="Option B (Optional)">
+                    <input type="text" id="optC" placeholder="Option C (Optional)">
+                    <input type="text" id="optD" placeholder="Option D (Optional)">
+                    <select id="correctOption">
+                        <option value="0">Correct: Option A</option>
+                        <option value="1" selected>Correct: Option B</option>
+                        <option value="2">Correct: Option C</option>
+                        <option value="3">Correct: Option D</option>
+                    </select>
+
+                    <input type="text" id="newImage" placeholder="Image Link (URL - Optional)...">
+                    <div class="form-buttons">
+                        <button class="main-save-btn" id="saveBtn" onclick="saveCard()">Save Card</button>
+                        <button id="cancelEditBtn" onclick="cancelEdit()" style="display:none; background-color: #64748b; color:white; border:none; border-radius:5px; padding:7px; font-size:12px; font-weight:bold; cursor:pointer;">Cancel</button>
+                    </div>
                 </div>
             </div>
+
+            <div class="card-area">
+                <div class="counter" id="cardCounter">Card 0 of 0</div>
+                
+                <button class="flip-instruction-btn" onclick="toggleCard()">🔄 Flip Card (Front / Back)</button>
+
+                <div class="flashcard" id="card">
+                    <button class="audio-btn" onclick="speakCurrent(event)" title="Listen Pronunciation">🔊</button>
+                    <span class="tag" id="cardTag">Front (Question)</span>
+                    <div class="content" id="cardContent">Loading...</div>
+                    <div id="imageContainer" style="width: 100%;"></div>
+                </div>
+
+                <div class="controls">
+                    <button onclick="prevCard(event)">Previous</button>
+                    <button onclick="nextCard(event)">Next</button>
+                </div>
+
+                <div class="action-row" style="margin-bottom: 6px;">
+                    <button class="btn-edit" onclick="loadCardForEditing()">✏️ Edit Current Card</button>
+                </div>
+                <div class="action-row" id="archiveButtons">
+                    <button class="btn-archive" onclick="moveToDeck('nextWeek')">📅 Next Week</button>
+                    <button class="btn-archive" onclick="moveToDeck('nextMonth')">🗓️ Next Month</button>
+                    <button class="btn-archive" onclick="moveToDeck('timeToTime')">🔄 From Time to Time</button>
+                </div>
+            </div>
+
         </div>
-
-        <div class="card-area">
-            <div class="counter" id="cardCounter">Card 0 of 0</div>
-            
-            <button class="flip-instruction-btn" onclick="toggleCard()">🔄 Flip Card (Front / Back)</button>
-
-            <div class="flashcard" id="card">
-                <button class="audio-btn" onclick="speakCurrent(event)" title="Listen Pronunciation">🔊</button>
-                <span class="tag" id="cardTag">Front (Question)</span>
-                <div class="content" id="cardContent">Loading...</div>
-                <div id="imageContainer" style="width: 100%;"></div>
-            </div>
-
-            <div class="controls">
-                <button onclick="prevCard(event)">Previous</button>
-                <button onclick="nextCard(event)">Next</button>
-            </div>
-
-            <div class="action-row" style="margin-bottom: 6px;">
-                <button class="btn-edit" onclick="loadCardForEditing()">✏️ Edit Current Card</button>
-            </div>
-            <div class="action-row" id="archiveButtons">
-                <button class="btn-archive" onclick="moveToDeck('nextWeek')">📅 Next Week</button>
-                <button class="btn-archive" onclick="moveToDeck('nextMonth')">🗓️ Next Month</button>
-                <button class="btn-archive" onclick="moveToDeck('timeToTime')">🔄 From Time to Time</button>
-            </div>
-        </div>
-
     </div>
 
     <!-- Manual Modal -->
@@ -628,7 +742,7 @@
 
             <div class="manual-section">
                 <h4>📝 2. Criando Flashcards & Nuvem</h4>
-                <p>Suas alterações são salvas e sincronizadas automaticamente via Firebase em tempo real!</p>
+                <p>Suas alterações são salvas e sincronizadas automaticamente no seu espaço privado do Firebase!</p>
             </div>
 
             <div class="manual-section">
@@ -658,7 +772,11 @@
         };
 
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
         const db = firebase.database();
+
+        let currentUser = null;
+        let dbRef = null;
 
         let decks = {
             movies: [],
@@ -673,6 +791,12 @@
         let showingBack = false;
         let editingIndex = null;
         let isSyncingFromCloud = false;
+
+        const loginScreen = document.getElementById("login-screen");
+        const appContent = document.getElementById("app-content");
+        const emailInput = document.getElementById("emailInput");
+        const loginMessage = document.getElementById("login-message");
+        const userEmailDisplay = document.getElementById("userEmailDisplay");
 
         const card = document.getElementById("card");
         const cardTag = document.getElementById("cardTag");
@@ -699,6 +823,70 @@
         const managementBox = document.getElementById("managementBox");
         const accordionIcon = document.getElementById("accordionIcon");
 
+        // Configurações do Link de E-mail
+        const actionCodeSettings = {
+            url: window.location.href.split('?')[0], // Retorna para a mesma página após clicar no link
+            handleCodeInApp: true,
+        };
+
+        function sendLoginLink() {
+            const email = emailInput.value.trim();
+            if (!email) {
+                alert("Por favor, digite seu e-mail.");
+                return;
+            }
+
+            auth.sendSignInLinkToEmail(email, actionCodeSettings)
+                .then(() => {
+                    window.localStorage.setItem('emailForSignIn', email);
+                    loginMessage.innerText = "✨ Link enviado! Verifique sua caixa de entrada e clique no link para entrar.";
+                })
+                .catch((error) => {
+                    console.error(error);
+                    alert("Erro ao enviar link: " + error.message);
+                });
+        }
+
+        // Verifica se o usuário está abrindo a página através do Link de E-mail recebido
+        if (auth.isSignInWithEmailLink(window.location.href)) {
+            let email = window.localStorage.getItem('emailForSignIn');
+            if (!email) {
+                email = prompt("Por favor, confirme seu e-mail para concluir o login:");
+            }
+            auth.signInWithEmailLink(email, window.location.href)
+                .then((result) => {
+                    window.localStorage.removeItem('emailForSignIn');
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                })
+                .catch((error) => {
+                    alert("Erro ao concluir login com link: " + error.message);
+                });
+        }
+
+        // Monitor de Autenticação do Firebase
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                loginScreen.style.display = "none";
+                appContent.style.display = "flex";
+                userEmailDisplay.innerText = `Conta: ${user.email}`;
+
+                // Cria uma pasta isolada no banco de dados para este usuário específico (auth.uid)
+                dbRef = db.ref(`users/${user.uid}/flashcards_data`);
+                initRealtimeSync();
+            } else {
+                currentUser = null;
+                loginScreen.style.display = "flex";
+                appContent.style.display = "none";
+            }
+        });
+
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.reload();
+            });
+        }
+
         function toggleManagementAccordion() {
             if (managementBox.classList.contains("collapsed")) {
                 managementBox.classList.remove("collapsed");
@@ -724,46 +912,53 @@
         }
 
         function saveToCloud() {
-            if (isSyncingFromCloud) return;
-            db.ref('flashcards_data').set(decks).catch(err => {
+            if (isSyncingFromCloud || !dbRef) return;
+            dbRef.set(decks).catch(err => {
                 console.error("Erro ao salvar na nuvem:", err);
             });
         }
 
-        db.ref('flashcards_data').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                isSyncingFromCloud = true;
-                
-                let loadedMovies = data.movies || [];
-                loadedMovies = loadedMovies.map(movie => ({
-                    ...movie,
-                    cards: Array.isArray(movie.cards) ? movie.cards : []
-                }));
+        function initRealtimeSync() {
+            dbRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    isSyncingFromCloud = true;
+                    
+                    let loadedMovies = data.movies || [];
+                    loadedMovies = loadedMovies.map(movie => ({
+                        ...movie,
+                        cards: Array.isArray(movie.cards) ? movie.cards : []
+                    }));
 
-                decks = {
-                    movies: loadedMovies,
-                    nextWeek: Array.isArray(data.nextWeek) ? data.nextWeek : [],
-                    nextMonth: Array.isArray(data.nextMonth) ? data.nextMonth : [],
-                    timeToTime: Array.isArray(data.timeToTime) ? data.timeToTime : []
-                };
+                    decks = {
+                        movies: loadedMovies,
+                        nextWeek: Array.isArray(data.nextWeek) ? data.nextWeek : [],
+                        nextMonth: Array.isArray(data.nextMonth) ? data.nextMonth : [],
+                        timeToTime: Array.isArray(data.timeToTime) ? data.timeToTime : []
+                    };
 
-                if (!currentDeckKey && decks.movies.length > 0) {
-                    currentDeckKey = decks.movies[0].id;
-                    isReviewDeck = false;
-                } else if (!isReviewDeck && currentDeckKey && !decks.movies.some(m => m.id === currentDeckKey)) {
-                    if (decks.movies.length > 0) {
+                    if (!currentDeckKey && decks.movies.length > 0) {
                         currentDeckKey = decks.movies[0].id;
-                    } else {
-                        currentDeckKey = null;
+                        isReviewDeck = false;
+                    } else if (!isReviewDeck && currentDeckKey && !decks.movies.some(m => m.id === currentDeckKey)) {
+                        if (decks.movies.length > 0) {
+                            currentDeckKey = decks.movies[0].id;
+                        } else {
+                            currentDeckKey = null;
+                        }
                     }
-                }
 
-                renderMenus();
-                updateView();
-                isSyncingFromCloud = false;
-            }
-        });
+                    renderMenus();
+                    updateView();
+                    isSyncingFromCloud = false;
+                } else {
+                    // Inicializa vazio para o novo usuário se não houver dados
+                    decks = { movies: [], nextWeek: [], nextMonth: [], timeToTime: [] };
+                    renderMenus();
+                    updateView();
+                }
+            });
+        }
 
         function addNewMovie() {
             const movieName = newMovieNameInput.value.trim();
