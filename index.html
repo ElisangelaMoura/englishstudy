@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estudo de Flashcards</title>
     
-    <!-- Tailwind CSS para estilização moderna e responsiva -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Firebase App (Base) e Auth e Database -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -22,12 +22,12 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
 
-    <!-- TELA DE ENTRADA -->
+    <!-- TELA DE LOGIN -->
     <div id="login-screen" class="hidden w-full max-w-md bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 text-center">
         <div class="mb-6">
             <span class="text-5xl">🧠</span>
             <h1 class="text-2xl font-bold mt-4">Flashcards Pro</h1>
-            <p class="text-slate-400 text-sm mt-2">Clique abaixo para entrar instantaneamente no seu espaço de estudos.</p>
+            <p class="text-slate-400 text-sm mt-2">Clique abaixo para entrar no seu espaço de estudos.</p>
         </div>
         <button onclick="loginAnonymously()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 px-4 rounded-xl transition duration-200 shadow-md">
             Entrar Rápido
@@ -36,25 +36,17 @@
 
     <!-- APLICATIVO PRINCIPAL -->
     <div id="app-screen" class="hidden w-full max-w-2xl flex flex-col items-center">
-        <!-- Barra de Identificação / Vinculação -->
-        <div class="w-full flex flex-col sm:flex-row justify-between items-center bg-slate-800 px-4 py-3 rounded-xl mb-4 border border-slate-700 gap-3">
+        <div class="w-full flex justify-between items-center bg-slate-800 px-4 py-3 rounded-xl mb-4 border border-slate-700">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-white">
-                    🧠
-                </div>
+                <div class="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-white">🧠</div>
                 <div>
-                    <p id="user-status-text" class="text-sm font-semibold">Sessão Local Ativa</p>
-                    <p class="text-xs text-slate-400">Seus dados estão seguros na nuvem</p>
+                    <p class="text-sm font-semibold">Sessão Ativa</p>
+                    <p class="text-xs text-slate-400">Dados salvos na nuvem</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-                <button id="link-google-btn" onclick="linkWithGoogle()" class="hidden text-xs bg-white hover:bg-slate-100 text-slate-900 font-semibold px-3 py-2 rounded-lg transition shadow-sm">
-                    🔗 Salvar com o Google
-                </button>
-                <button onclick="logout()" class="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-2 rounded-lg transition">
-                    Sair
-                </button>
-            </div>
+            <button onclick="logout()" class="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-lg transition">
+                Sair
+            </button>
         </div>
 
         <div class="w-full bg-slate-800 p-4 rounded-2xl shadow-xl border border-slate-700 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -65,12 +57,8 @@
                 </select>
             </div>
             <div class="w-full sm:w-auto flex gap-2 items-end">
-                <button onclick="openNewDeckModal()" class="flex-1 sm:flex-initial bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2.5 rounded-xl transition">
-                    + Novo Tema
-                </button>
-                <button onclick="openAddCardModal()" class="flex-1 sm:flex-initial bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2.5 rounded-xl transition">
-                    + Novo Card
-                </button>
+                <button onclick="openNewDeckModal()" class="flex-1 sm:flex-initial bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2.5 rounded-xl transition">+ Novo Tema</button>
+                <button onclick="openAddCardModal()" class="flex-1 sm:flex-initial bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2.5 rounded-xl transition">+ Novo Card</button>
             </div>
         </div>
 
@@ -93,12 +81,8 @@
             </div>
 
             <div class="flex gap-4 w-full">
-                <button onclick="prevCard()" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 font-medium py-3 rounded-xl transition">
-                    ⬅ Anterior
-                </button>
-                <button onclick="nextCard()" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 font-medium py-3 rounded-xl transition">
-                    Próximo ➡
-                </button>
+                <button onclick="prevCard()" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 font-medium py-3 rounded-xl transition">⬅ Anterior</button>
+                <button onclick="nextCard()" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 font-medium py-3 rounded-xl transition">Próximo ➡</button>
             </div>
         </div>
     </div>
@@ -155,26 +139,11 @@
         let currentCardIndex = 0;
         let isFlipped = false;
 
-        // Monitorar autenticação
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUser = user;
                 document.getElementById("login-screen").classList.add("hidden");
                 document.getElementById("app-screen").classList.remove("hidden");
-
-                // Verificar se o usuário já está vinculado ao Google ou é anônimo
-                const isAnonymous = user.isAnonymous;
-                const linkBtn = document.getElementById("link-google-btn");
-                const statusText = document.getElementById("user-status-text");
-
-                if (isAnonymous) {
-                    statusText.innerText = "Modo Rápido (Não sincronizado)";
-                    linkBtn.classList.remove("hidden"); // Mostra o botão para salvar com o Google
-                } else {
-                    statusText.innerText = `Conectado: ${user.displayName || user.email || "Google"}`;
-                    linkBtn.classList.add("hidden"); // Esconde o botão se já estiver vinculado
-                }
-
                 loadUserData();
             } else {
                 currentUser = null;
@@ -183,22 +152,11 @@
             }
         });
 
-        / Entrar de forma anônima com exibição do erro exato
+        // Função limpa com captura de erro detalhada para sabermos exatamente se o Firebase recusar
         function loginAnonymously() {
             auth.signInAnonymously().catch((error) => {
-                console.error("Erro completo do Firebase:", error);
-                alert("Erro Firebase: " + error.code + " - " + error.message);
-            });
-        }
-
-        // Vincular a conta anônima atual com o Google (Preserva os flashcards e ativa a sincronização)
-        function linkWithGoogle() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            currentUser.linkWithPopup(provider).then((result) => {
-                alert("Conta vinculada com sucesso! Seus dados agora estão salvos na sua conta Google.");
-            }).catch((error) => {
-                console.error("Erro ao vincular conta:", error);
-                alert("Não foi possível vincular com o Google. Tente novamente.");
+                console.error("Erro técnico:", error);
+                alert("Erro Firebase (" + error.code + "): " + error.message);
             });
         }
 
@@ -220,7 +178,6 @@
         function updateDeckSelect() {
             const select = document.getElementById("deck-select");
             select.innerHTML = "";
-            
             const deckKeys = Object.keys(userData);
 
             if (deckKeys.length === 0) {
