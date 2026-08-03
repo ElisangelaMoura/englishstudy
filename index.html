@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>English Flashcards - Private Cloud Edition</title>
     
+    <!-- Ícones para a tela inicial do celular -->
+    <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=180&h=180&q=80">
+    <link rel="icon" type="image/png" href="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=192&h=192&q=80">
+    
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -103,29 +107,68 @@
             flex-direction: column;
             align-items: center;
         }
+
+        /* Barra de Usuário Estilo Profissional / App */
         .user-bar {
             width: 100%;
             max-width: 900px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #e2e8f0;
-            padding: 8px 15px;
-            border-radius: 8px;
+            background: #ffffff;
+            padding: 10px 20px;
+            border-radius: 10px;
             margin-bottom: 15px;
-            font-size: 13px;
-            color: #334155;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
             box-sizing: border-box;
         }
-        .user-bar button {
-            background: #dc2626;
+        .user-profile-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #1b365d, #336699);
             color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
+            font-weight: bold;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+        .user-email-text {
+            font-size: 13px;
+            font-weight: bold;
+            color: #1e293b;
+        }
+        .user-role-text {
+            font-size: 11px;
+            color: #64748b;
+        }
+        .user-bar button {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 6px 14px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 12px;
             font-weight: bold;
+            transition: all 0.2s;
+        }
+        .user-bar button:hover {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fca5a5;
         }
 
         .welcome-banner {
@@ -641,7 +684,13 @@
     <!-- CONTEÚDO PRINCIPAL (Visível apenas pós-login) -->
     <div id="app-content">
         <div class="user-bar">
-            <span id="userEmailDisplay">Logado</span>
+            <div class="user-profile-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-details">
+                    <span class="user-email-text" id="userEmailDisplay">usuario@email.com</span>
+                    <span class="user-role-text">Active Session</span>
+                </div>
+            </div>
             <button onclick="logout()">Sair</button>
         </div>
 
@@ -749,63 +798,20 @@
 
             <div class="manual-section">
                 <h4>🎬 1. Cadastrando um Novo Tema</h4>
-                <p>Para começar a estudar, você precisa criar uma "pasta" (deck) baseada em um tema (filme, livro, texto, outros):</p>
+                <p>Para começar a estudar, crie um deck temático:</p>
                 <ul>
-                    <li><strong>Passo a passo:</strong> Vá até o menu lateral esquerdo na seção <em>"Add New Tema"</em>.</li>
-                    <li><strong>Ação:</strong> Digite o nome do tema no campo de texto e clique no botão <em>"+ Add"</em>.</li>
-                    <li><strong>Resultado:</strong> O tema aparecerá automaticamente logo abaixo na sua lista de decks de temas.</li>
+                    <li>Vá em <em>"Add New Tema"</em>, digite o nome e clique em <em>"+ Add"</em>.</li>
                 </ul>
             </div>
 
             <div class="manual-section">
-                <h4>📝 2. Criando e Gerenciando Flashcards</h4>
-                <p>Cada cartão guarda uma informação importante que você deseja memorizar.</p>
-                <ul>
-                    <li><strong>Front (Frente):</strong> A palavra, expressão ou pergunta em inglês (ex: "Piece of cake").</li>
-                    <li><strong>Back (Verso):</strong> A explicação ou tradução em português (ex: "Muito fácil, moleza").</li>
-                    <li><strong>Exercise (Opcional):</strong> Uma frase de exemplo aplicando o termo.</li>
-                    <li><strong>Opções A, B, C, D (Opcional):</strong> Alternativas para criar um quiz de múltipla escolha.</li>
-                    <li><strong>Correct Option:</strong> Selecione qual das letras é a resposta certa.</li>
-                    <li><strong>Image Link (Opcional):</strong> Cole o link de uma imagem da internet para ilustrar o cartão.</li>
-                </ul>
+                <h4>📝 2. Criando Flashcards & Nuvem</h4>
+                <p>Suas alterações são salvas e sincronizadas automaticamente no seu espaço privado do Firebase!</p>
             </div>
 
             <div class="manual-section">
-                <h4>🔄 3. Usando e Estudando com o Sistema</h4>
-                <ul>
-                    <li><strong>Virar o cartão:</strong> Clique no botão <em>"🔄 Flip Card"</em> ou diretamente sobre o cartão para ver a resposta no verso e testar os exercícios.</li>
-                    <li><strong>Ouvir a pronúncia:</strong> Clique no ícone <em>🔊</em> para escutar a pronúncia nativa em inglês.</li>
-                    <li><strong>Navegação:</strong> Use os botões <em>"Previous"</em> e <em>"Next"</em>.</li>
-                </ul>
-            </div>
-
-            <div class="manual-section">
-                <h4>📅 4. Revisão Espaçada (Spaced Review)</h4>
-                <p>Use os botões de arquivo inferior para enviar cartões para:</p>
-                <ul>
-                    <li><strong>📅 Next Week:</strong> Para revisar na próxima semana.</li>
-                    <li><strong>🗓️ Next Month:</strong> Para revisar no próximo mês.</li>
-                    <li><strong>🔄 From Time to Time:</strong> Para revisões esporádicas.</li>
-                </ul>
-            </div>
-
-            <div class="manual-section">
-                <h4>💡 Dicas de Ouro para Estudos Eficientes</h4>
-                <ul>
-                    <li><strong>Seja Direto na Frente:</strong> Coloque apenas uma palavra ou expressão curta.</li>
-                    <li><strong>Contextualize:</strong> Adicione frases reais de filmes, livros ou textos.</li>
-                    <li><strong>Use Imagens:</strong> Ajudam na memorização visual rápida.</li>
-                </ul>
-            </div>
-
-            <div class="manual-section">
-                <h4>🧠 O Poder da Repetição Espaçada: O que a Ciência aponta</h4>
-                <p>A Repetição Espaçada é comprovada pela psicologia cognitiva e neurociência:</p>
-                <ul>
-                    <li><strong>Curva do Esquecimento de Ebbinghaus:</strong> O cérebro descarta informações se não revisitadas. A repetição reinicia a curva e fortalece conexões neurais.</li>
-                    <li><strong>Spacing Effect:</strong> Distribuir sessões ao longo do tempo supera drasticamente o estudo concentrado de última hora.</li>
-                    <li><strong>Recuperação Ativa:</strong> O esforço do cérebro para resgatar a resposta ao virar o cartão torna o aprendizado sólido.</li>
-                </ul>
+                <h4>🧠 3. Repetição Espaçada</h4>
+                <p>Mantenha sua constância usando os decks de revisão e o recurso de áudio nativo.</p>
             </div>
         </div>
     </div>
@@ -856,6 +862,7 @@
         const passwordInput = document.getElementById("passwordInput");
         const loginMessage = document.getElementById("login-message");
         const userEmailDisplay = document.getElementById("userEmailDisplay");
+        const userAvatar = document.getElementById("userAvatar");
 
         const card = document.getElementById("card");
         const cardTag = document.getElementById("cardTag");
@@ -915,7 +922,8 @@
                 currentUser = user;
                 loginScreen.style.display = "none";
                 appContent.style.display = "flex";
-                userEmailDisplay.innerText = `Conta: ${user.email}`;
+                userEmailDisplay.innerText = user.email;
+                userAvatar.innerText = user.email.charAt(0).toUpperCase();
 
                 dbRef = db.ref(`users/${user.uid}/flashcards_data`);
                 initRealtimeSync();
