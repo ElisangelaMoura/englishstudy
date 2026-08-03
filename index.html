@@ -235,6 +235,17 @@
             margin-top: 5px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dictionary-link-icon {
+            font-size: 14px;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        .dictionary-link-icon:hover {
+            transform: scale(1.2);
         }
         .accordion-header {
             cursor: pointer;
@@ -727,8 +738,13 @@
                 </div>
 
                 <div class="menu-section-title accordion-header" onclick="toggleManagementAccordion()">
-                    <span id="formTitle">🛠️ Flashcard Management</span>
-                    <span id="accordionIcon" style="font-size: 11px;">▼ Expand</span>
+                    <div>
+                        <span id="formTitle">🛠️ Flashcard Management</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <a href="https://www.oxfordlearnersdictionaries.com/us/" target="_blank" class="dictionary-link-icon" title="Open Oxford Dictionary" onclick="event.stopPropagation()">📖</a>
+                        <span id="accordionIcon" style="font-size: 11px;">▼ Expand</span>
+                    </div>
                 </div>
                 <div class="management-box collapsed" id="managementBox">
                     <select id="cardMovieSelect"></select>
