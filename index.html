@@ -412,6 +412,48 @@
             font-weight: bold;
             width: 100%;
         }
+
+        /* TOOLTIP DE TRADUÇÃO AO PASSAR O MOUSE (Opção 1) */
+        .hover-translate {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted currentColor;
+            cursor: help;
+        }
+        .hover-translate .tooltip-text {
+            visibility: hidden;
+            width: max-content;
+            max-width: 250px;
+            background-color: #1e293b;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 6px 10px;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            font-weight: normal;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .hover-translate .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1e293b transparent transparent transparent;
+        }
+        .hover-translate:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
         
         .back-content {
             width: 100%;
@@ -1196,7 +1238,14 @@
 
             const currentCard = activeList[currentIndex];
             cardTag.innerText = "Front (Question)";
-            cardContent.innerHTML = `<div style="font-size: 20px; margin-bottom: 3px;">${currentCard.front}</div>`;
+            
+            // Adicionando o Tooltip na frente do card (Hover / Toque) com base na explicação salva no verso
+            cardContent.innerHTML = `
+                <div style="font-size: 20px; margin-bottom: 3px;">
+                    <span class="hover-translate">${currentCard.front}
+                        <span class="tooltip-text">Tradução/Dica: ${currentCard.back}</span>
+                    </span>
+                </div>`;
             
             if (currentCard.image && currentCard.image.trim() !== "") {
                 imageContainer.innerHTML = `<img src="${currentCard.image}" class="card-image" alt="Card Image">`;
@@ -1271,7 +1320,12 @@
             } else {
                 card.classList.remove("show-back");
                 cardTag.innerText = "Front (Question)";
-                cardContent.innerHTML = `<div style="font-size: 20px; margin-bottom: 3px;">${currentCard.front}</div>`;
+                cardContent.innerHTML = `
+                    <div style="font-size: 20px; margin-bottom: 3px;">
+                        <span class="hover-translate">${currentCard.front}
+                            <span class="tooltip-text">Tradução/Dica: ${currentCard.back}</span>
+                        </span>
+                    </div>`;
                 
                 if (currentCard.image && currentCard.image.trim() !== "") {
                     imageContainer.innerHTML = `<img src="${currentCard.image}" class="card-image" alt="Card Image">`;
