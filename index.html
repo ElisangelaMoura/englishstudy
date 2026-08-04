@@ -27,6 +27,36 @@
             min-height: 100vh;
         }
 
+        /* Tooltip Interativo no Verso */
+        .hover-translate {
+            position: relative;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.7);
+            cursor: help;
+        }
+        .hover-translate .tooltip-text {
+            visibility: hidden;
+            background-color: #1b365d;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 4px 8px;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+            font-size: 11px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .hover-translate:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
         /* Tela de Login / Cadastro */
         #login-screen {
             display: flex;
@@ -411,48 +441,6 @@
             margin-bottom: 8px;
             font-weight: bold;
             width: 100%;
-        }
-
-        /* TOOLTIP DE TRADUÇÃO AO PASSAR O MOUSE (Opção 1) */
-        .hover-translate {
-            position: relative;
-            display: inline-block;
-            border-bottom: 1px dotted currentColor;
-            cursor: help;
-        }
-        .hover-translate .tooltip-text {
-            visibility: hidden;
-            width: max-content;
-            max-width: 250px;
-            background-color: #1e293b;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 6px 10px;
-            position: absolute;
-            z-index: 100;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 12px;
-            font-weight: normal;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        .hover-translate .tooltip-text::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #1e293b transparent transparent transparent;
-        }
-        .hover-translate:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
         }
         
         .back-content {
@@ -990,6 +978,19 @@
         const managementBox = document.getElementById("managementBox");
         const accordionIcon = document.getElementById("accordionIcon");
 
+        // Funções para processamento automático de formato [termo|tradução]
+        function parseFrontText(text) {
+            if (!text) return "";
+            return text.replace(/\[([^\|]+)\|([^\]]+)\]/g, '$1');
+        }
+
+        function parseTooltips(text) {
+            if (!text) return "";
+            return text.replace(/\[([^\|]+)\|([^\]]+)\]/g, (match, term, translation) => {
+                return `<span class="hover-translate">${term}<span class="tooltip-text">${translation}</span></span>`;
+            });
+        }
+
         function loginUser() {
             const email = emailInput.value.trim();
             const password = passwordInput.value.trim();
@@ -1239,13 +1240,9 @@
             const currentCard = activeList[currentIndex];
             cardTag.innerText = "Front (Question)";
             
-            // Adicionando o Tooltip na frente do card (Hover / Toque) com base na explicação salva no verso
-            cardContent.innerHTML = `
-                <div style="font-size: 20px; margin-bottom: 3px;">
-                    <span class="hover-translate">${currentCard.front}
-                        <span class="tooltip-text">Tradução/Dica: ${currentCard.back}</span>
-                    </span>
-                </div>`;
+            // FRENTE LIMPA (Remove colchetes e tooltips automaticamente)
+            let cleanFront = parseFrontText(currentCard.front);
+            cardContent.innerHTML = `<div style="font-size: 20px; margin-bottom: 3px;">${cleanFront}</div>`;
             
             if (currentCard.image && currentCard.image.trim() !== "") {
                 imageContainer.innerHTML = `<img src="${currentCard.image}" class="card-image" alt="Card Image">`;
@@ -1260,7 +1257,7 @@
             }
 
             cardCounter.innerText = `Card ${currentIndex + 1} of ${activeList.length} (${deckNameLabel})`;
-            speakText(currentCard.front);
+            speakText(cleanFront);
         }
 
         function toggleCard() {
@@ -1273,14 +1270,19 @@
                 card.classList.add("show-back");
                 cardTag.innerText = "Back (Answer & Exercise)";
                 
+                // VERSO COM TOOLTIPS ATIVADOS AUTOMATICAMENTE
+                let parsedBack = parseTooltips(currentCard.back);
+                let parsedExerciseText = currentCard.exercise ? parseTooltips(currentCard.exercise) : "";
+
                 let exerciseHTML = "";
-                if (currentCard.exercise && currentCard.exercise.trim() !== "") {
+                if (parsedExerciseText.trim() !== "") {
                     let optionsButtons = "";
                     if (currentCard.options && currentCard.options.filter(o => o.trim() !== "").length > 0) {
                         optionsButtons = currentCard.options.map((optText, index) => {
                             if (!optText || optText.trim() === "") return "";
                             let letter = ['A', 'B', 'C', 'D'][index];
-                            return `<button class="option-btn" onclick="checkMultipleChoice(event, ${index}, ${currentCard.correct})">${letter}) ${optText}</button>`;
+                            let parsedOptText = parseTooltips(optText);
+                            return `<button class="option-btn" onclick="checkMultipleChoice(event, ${index}, ${currentCard.correct})">${letter}) ${parsedOptText}</button>`;
                         }).join('');
                     }
 
@@ -1296,7 +1298,7 @@
 
                     exerciseHTML = `
                         <div class="exercise-box">
-                            <div style="margin-bottom: 4px;">${currentCard.exercise}</div>
+                            <div style="margin-bottom: 4px;">${parsedExerciseText}</div>
                             ${optionsButtons}
                         </div>
                     `;
@@ -1304,7 +1306,7 @@
 
                 cardContent.innerHTML = `
                     <div class="back-content">
-                        <div class="explanation"><strong>Meaning:</strong> ${currentCard.back}</div>
+                        <div class="explanation"><strong>Meaning:</strong> ${parsedBack}</div>
                         ${exerciseHTML}
                     </div>
                 `;
@@ -1316,16 +1318,12 @@
                 }
 
                 showingBack = true;
-                speakText(currentCard.back);
+                speakText(currentCard.back.replace(/\[([^\|]+)\|([^\]]+)\]/g, '$1'));
             } else {
                 card.classList.remove("show-back");
                 cardTag.innerText = "Front (Question)";
-                cardContent.innerHTML = `
-                    <div style="font-size: 20px; margin-bottom: 3px;">
-                        <span class="hover-translate">${currentCard.front}
-                            <span class="tooltip-text">Tradução/Dica: ${currentCard.back}</span>
-                        </span>
-                    </div>`;
+                let cleanFront = parseFrontText(currentCard.front);
+                cardContent.innerHTML = `<div style="font-size: 20px; margin-bottom: 3px;">${cleanFront}</div>`;
                 
                 if (currentCard.image && currentCard.image.trim() !== "") {
                     imageContainer.innerHTML = `<img src="${currentCard.image}" class="card-image" alt="Card Image">`;
@@ -1334,7 +1332,7 @@
                 }
 
                 showingBack = false;
-                speakText(currentCard.front);
+                speakText(cleanFront);
             }
         }
 
@@ -1368,7 +1366,7 @@
             let activeList = getActiveCardsList();
             if (activeList.length === 0) return;
             let textToSpeak = showingBack ? activeList[currentIndex].back : activeList[currentIndex].front;
-            speakText(textToSpeak);
+            speakText(textToSpeak.replace(/\[([^\|]+)\|([^\]]+)\]/g, '$1'));
         }
 
         function nextCard(event) {
