@@ -138,7 +138,7 @@
             align-items: center;
         }
 
-        /* Barra de Usuário Estilo Profissional / App */
+        /* Barra de Usuário */
         .user-bar {
             width: 100%;
             max-width: 900px;
@@ -708,7 +708,7 @@
 </head>
 <body>
 
-    <!-- TELA DE LOGIN (E-mail e Senha) -->
+    <!-- TELA DE LOGIN -->
     <div id="login-screen">
         <div class="login-card">
             <h2>English Flashcards 🎬</h2>
@@ -722,7 +722,7 @@
         </div>
     </div>
 
-    <!-- CONTEÚDO PRINCIPAL (Visível apenas pós-login) -->
+    <!-- CONTEÚDO PRINCIPAL -->
     <div id="app-content">
         <div class="user-bar">
             <div class="user-profile-info">
@@ -813,6 +813,7 @@
                     <div id="imageContainer" style="width: 100%;"></div>
                 </div>
 
+                <!-- Botões de navegação (Previous / Next) -->
                 <div class="controls">
                     <button onclick="prevCard(event)">Previous</button>
                     <button onclick="nextCard(event)">Next</button>
@@ -839,67 +840,23 @@
             
             <div class="manual-section">
                 <p><strong>Autoria:</strong> Elisangela da Silva Moura</p>
-                <p><strong>Objetivo:</strong> Facilitar o aprendizado de inglês através de frases, expressões e contextos retirados de filmes, livros, textos ou outras fontes, utilizando a técnica de repetição espaçada e múltipla escolha.</p>
+                <p><strong>Objetivo:</strong> Facilitar o aprendizado de inglês através de frases, expressões e contextos retirados de filmes, livros, textos ou outras fontes.</p>
             </div>
 
             <div class="manual-section">
                 <h4>🎬 1. Cadastrando um Novo Tema</h4>
-                <p>Para começar a estudar, você precisa criar uma "pasta" (deck) baseada em um tema (filme, livro, texto, outros):</p>
+                <p>Para começar a estudar, você precisa criar uma "pasta" (deck) baseada em um tema:</p>
                 <ul>
-                    <li><strong>Passo a passo:</strong> Vá até o menu lateral esquerdo na seção <em>"Add New Tema"</em>.</li>
-                    <li><strong>Ação:</strong> Digite o nome do tema no campo de texto e clique no botão <em>"+ Add"</em>.</li>
-                    <li><strong>Resultado:</strong> O tema aparecerá automaticamente logo abaixo na sua lista de decks de temas.</li>
+                    <li>Vá até o menu lateral esquerdo na seção <em>"Add New Tema"</em>.</li>
+                    <li>Digite o nome e clique em <em>"+ Add"</em>.</li>
                 </ul>
             </div>
 
             <div class="manual-section">
-                <h4>📝 2. Criando e Gerenciando Flashcards</h4>
-                <p>Cada cartão guarda uma informação importante que você deseja memorizar.</p>
+                <h4>🔄 2. Navegação Completa</h4>
                 <ul>
-                    <li><strong>Front (Frente):</strong> A palavra, expressão ou pergunta em inglês (ex: "Piece of cake").</li>
-                    <li><strong>Back (Verso):</strong> A explicação ou tradução em português (ex: "Muito fácil, moleza").</li>
-                    <li><strong>Exercise (Opcional):</strong> Uma frase de exemplo aplicando o termo.</li>
-                    <li><strong>Opções A, B, C, D (Opcional):</strong> Alternativas para criar um quiz de múltipla escolha.</li>
-                    <li><strong>Correct Option:</strong> Selecione qual das letras é a resposta certa.</li>
-                    <li><strong>Image Link (Opcional):</strong> Cole o link de uma imagem da internet para ilustrar o cartão.</li>
-                </ul>
-            </div>
-
-            <div class="manual-section">
-                <h4>🔄 3. Usando e Estudando com o Sistema</h4>
-                <ul>
-                    <li><strong>Virar o cartão:</strong> Clique no botão <em>"🔄 Flip Card"</em> ou diretamente sobre o cartão para ver a resposta no verso e testar os exercícios.</li>
-                    <li><strong>Ouvir a pronúncia:</strong> Clique no ícone <em>🔊</em> para escutar a pronúncia nativa em inglês.</li>
-                    <li><strong>Navegação:</strong> Use os botões <em>"Previous"</em> e <em>"Next"</em>.</li>
-                </ul>
-            </div>
-
-            <div class="manual-section">
-                <h4>📅 4. Revisão Espaçada (Spaced Review)</h4>
-                <p>Use os botões de arquivo inferior para enviar cartões para:</p>
-                <ul>
-                    <li><strong>📅 Next Week:</strong> Para revisar na próxima semana.</li>
-                    <li><strong>🗓️ Next Month:</strong> Para revisar no próximo mês.</li>
-                    <li><strong>🔄 From Time to Time:</strong> Para revisões esporádicas.</li>
-                </ul>
-            </div>
-
-            <div class="manual-section">
-                <h4>💡 Dicas de Ouro para Estudos Eficientes</h4>
-                <ul>
-                    <li><strong>Seja Direto na Frente:</strong> Coloque apenas uma palavra ou expressão curta.</li>
-                    <li><strong>Contextualize:</strong> Adicione frases reais de filmes, livros ou textos.</li>
-                    <li><strong>Use Imagens:</strong> Ajudam na memorização visual rápida.</li>
-                </ul>
-            </div>
-
-            <div class="manual-section">
-                <h4>🧠 O Poder da Repetição Espaçada: O que a Ciência aponta</h4>
-                <p>A Repetição Espaçada é comprovada pela psicologia cognitiva e neurociência:</p>
-                <ul>
-                    <li><strong>Curva do Esquecimento de Ebbinghaus:</strong> O cérebro descarta informações se não revisitadas. A repetição reinicia a curva e fortalece conexões neurais.</li>
-                    <li><strong>Spacing Effect:</strong> Distribuir sessões ao longo do tempo supera drasticamente o estudo concentrado de última hora.</li>
-                    <li><strong>Recuperação Ativa:</strong> O esforço do cérebro para resgatar a resposta ao virar o cartão torna o aprendizado sólido.</li>
+                    <li>Use o botão <strong>"Previous"</strong> para voltar ao flashcard anterior e o botão <strong>"Next"</strong> para avançar.</li>
+                    <li>Clique em <strong>"🔄 Flip Card"</strong> para ver a resposta no verso com suporte a dicas interativas.</li>
                 </ul>
             </div>
         </div>
@@ -907,10 +864,7 @@
 
     <footer class="system-footer">
         Developed by Elisangela da Silva Moura 
-        <a href="https://www.linkedin.com/in/elisangela-moura-3748a412/" target="_blank">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0a66c2" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-            LinkedIn
-        </a>
+        <a href="https://www.linkedin.com/in/elisangela-moura-3748a412/" target="_blank">LinkedIn</a>
     </footer>
 
     <script>
@@ -978,7 +932,6 @@
         const managementBox = document.getElementById("managementBox");
         const accordionIcon = document.getElementById("accordionIcon");
 
-        // Funções para processamento automático de formato [termo|tradução]
         function parseFrontText(text) {
             if (!text) return "";
             return text.replace(/\[([^\|]+)\|([^\]]+)\]/g, '$1');
@@ -998,7 +951,6 @@
                 loginMessage.innerText = "Preencha o e-mail e a senha.";
                 return;
             }
-
             auth.signInWithEmailAndPassword(email, password)
                 .catch((error) => {
                     loginMessage.innerText = "Erro ao entrar: " + error.message;
@@ -1012,7 +964,6 @@
                 loginMessage.innerText = "Preencha o e-mail e a senha para cadastrar.";
                 return;
             }
-
             auth.createUserWithEmailAndPassword(email, password)
                 .catch((error) => {
                     loginMessage.innerText = "Erro ao cadastrar: " + error.message;
@@ -1122,7 +1073,6 @@
             }
 
             let movieId = movieName.toLowerCase().replace(/[^a-z0-9]/g, '-');
-            
             if (decks.movies.some(m => m.id === movieId)) {
                 movieId += '-' + Math.floor(Math.random() * 1000);
             }
@@ -1240,7 +1190,6 @@
             const currentCard = activeList[currentIndex];
             cardTag.innerText = "Front (Question)";
             
-            // FRENTE LIMPA (Remove colchetes e tooltips automaticamente)
             let cleanFront = parseFrontText(currentCard.front);
             cardContent.innerHTML = `<div style="font-size: 20px; margin-bottom: 3px;">${cleanFront}</div>`;
             
@@ -1270,7 +1219,6 @@
                 card.classList.add("show-back");
                 cardTag.innerText = "Back (Answer & Exercise)";
                 
-                // VERSO COM TOOLTIPS ATIVADOS AUTOMATICAMENTE
                 let parsedBack = parseTooltips(currentCard.back);
                 let parsedExerciseText = currentCard.exercise ? parseTooltips(currentCard.exercise) : "";
 
