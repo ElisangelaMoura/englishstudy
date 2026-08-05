@@ -589,6 +589,8 @@
         .btn-edit:hover { background-color: #4338ca; }
         .btn-archive { background-color: #d97706; }
         .btn-archive:hover { background-color: #b45309; }
+        .btn-restore { background-color: #059669; }
+        .btn-restore:hover { background-color: #047857; }
 
         .empty-state {
             font-style: italic;
@@ -743,6 +745,11 @@
                     <button class="manual-btn" onclick="openManual()">💡 Open Complete Manual</button>
                 </div>
 
+                <div class="menu-section-title" style="margin-top: 10px;">🔥 Revisão Principal (Diária)</div>
+                <div class="deck-buttons">
+                    <button id="tab-dailyReview" onclick="switchDailyReview()" style="background-color: #059669; color: white; border-color: #047857;">☀️ Daily Review (Todos os Temas)</button>
+                </div>
+
                 <div class="menu-section-title" style="margin-top: 10px;">📁 Add New Theme</div>
                 <div class="movie-add-box">
                     <input type="text" id="newMovieNameInput" placeholder="Theme name (movie, book...)...">
@@ -752,7 +759,7 @@
                 <div class="menu-section-title" style="margin-top: 10px;">📚 Your Theme Decks</div>
                 <div class="deck-buttons" id="movieDecksContainer"></div>
 
-                <div class="menu-section-title">📅 Spaced Review</div>
+                <div class="menu-section-title">📅 Spaced Review (Longo Prazo)</div>
                 <div class="deck-buttons">
                     <button id="tab-nextWeek" onclick="switchDeck('nextWeek')">📅 Next Week</button>
                     <button id="tab-nextMonth" onclick="switchDeck('nextMonth')">🗓️ Next Month</button>
@@ -769,7 +776,7 @@
                     </div>
                 </div>
                 <div class="management-box collapsed" id="managementBox">
-                    <label style="font-size: 11px; font-weight: bold; color: #475569;">Target Theme Deck:</label>
+                    <label style="font-size: 11px; font-weight: bold; color: #475569;">Target Deck / Destination:</label>
                     <select id="cardMovieSelect"></select>
                     <input type="text" id="newFront" placeholder="Front (Word or Free Example)...">
                     <textarea id="newBack" rows="2" placeholder="Back explanation..."></textarea>
@@ -815,13 +822,9 @@
                     <button class="btn-edit" onclick="loadCardForEditing()">✏️ Edit Current Card</button>
                 </div>
 
-                <div style="width: 100%; max-width: 440px; margin-top: 14px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
-                    <div style="font-size: 11px; font-weight: bold; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">📁 Mover cartão para Revisão Espaçada:</div>
-                    <div class="action-row" id="archiveButtons">
-                        <button class="btn-archive" onclick="moveToDeck('nextWeek')">📅 Next Week</button>
-                        <button class="btn-archive" onclick="moveToDeck('nextMonth')">🗓️ Next Month</button>
-                        <button class="btn-archive" onclick="moveToDeck('timeToTime')">🔄 From Time to Time</button>
-                    </div>
+                <!-- Painel dinâmico de botões de ação abaixo do cartão -->
+                <div style="width: 100%; max-width: 440px; margin-top: 14px; border-top: 1px dashed #cbd5e1; padding-top: 10px;" id="actionBoxContainer">
+                    <!-- Conteúdo injetado via JS dependendo se está em tema/diário ou em revisão de longo prazo -->
                 </div>
             </div>
 
@@ -835,67 +838,21 @@
             
             <div class="manual-section">
                 <p><strong>Autoria:</strong> Elisangela da Silva Moura</p>
-                <p><strong>Objetivo:</strong> Facilitar o aprendizado de inglês através de frases, expressões e contextos retirados de filmes, livros, textos ou outras fontes, utilizando a técnica de repetição espaçada e múltipla escolha.</p>
+                <p><strong>Objetivo:</strong> Facilitar o aprendizado de inglês através de frases, expressões e contextos retirados de filmes, livros, textos ou outras fontes, utilizando a rotina de revisão diária e repetição espaçada.</p>
             </div>
 
             <div class="manual-section">
-                <h4>🎬 1. Cadastrando um Novo Tema</h4>
-                <p>Para começar a estudar, você precisa criar uma "pasta" (deck) baseada em um tema (filme, livro, texto, outros):</p>
-                <ul>
-                    <li><strong>Passo a passo:</strong> Vá até o menu lateral esquerdo na seção <em>"Add New Tema"</em>.</li>
-                    <li><strong>Ação:</strong> Digite o nome do tema no campo de texto e clique no botão <em>"+ Add"</em>.</li>
-                    <li><strong>Resultado:</strong> O tema aparecerá automaticamente logo abaixo na sua lista de decks de temas.</li>
-                </ul>
+                <h4>☀️ Daily Review (Revisão Diária)</h4>
+                <p>O botão <strong>Daily Review</strong> reúne todos os cartões cadastrados em seus temas principais para que você possa estudá-los todos juntos antes de enviá-los para pastas de longo prazo.</p>
             </div>
 
             <div class="manual-section">
-                <h4>📝 2. Criando e Gerenciando Flashcards</h4>
-                <p>Cada cartão guarda uma informação importante que você deseja memorizar.</p>
+                <h4>📅 Repetição Espaçada de Longo Prazo</h4>
+                <p>Use os botões inferiores para enviar os cartões já consolidados para:</p>
                 <ul>
-                    <li><strong>Front (Frente):</strong> A palavra, expressão ou pergunta em inglês (ex: "Piece of cake").</li>
-                    <li><strong>Back (Verso):</strong> A explicação ou tradução em português (ex: "Muito fácil, moleza").</li>
-                    <li><strong>Exercise (Opcional):</strong> Uma frase de exemplo aplicando o termo.</li>
-                    <li><strong>Opções A, B, C, D (Opcional):</strong> Alternativas para criar um quiz de múltipla escolha.</li>
-                    <li><strong>Correct Option:</strong> Selecione qual das letras é a resposta certa.</li>
-                    <li><strong>Image Link (Opcional):</strong> Cole o link de uma imagem da internet para ilustrar o cartão.</li>
-                </ul>
-            </div>
-
-            <div class="manual-section">
-                <h4>🔄 3. Usando e Estudando com o Sistema</h4>
-                <ul>
-                    <li><strong>Virar o cartão:</strong> Clique no botão <em>"🔄 Flip Card"</em> ou diretamente sobre o cartão para ver a resposta no verso e testar os exercícios.</li>
-                    <li><strong>Ouvir a pronúncia:</strong> Clique no ícone <em>🔊</em> para escutar a pronúncia nativa em inglês.</li>
-                    <li><strong>Navegação:</strong> Use os botões <em>"Previous"</em> e <em>"Next"</em>.</li>
-                </ul>
-            </div>
-
-            <div class="manual-section">
-                <h4>📅 4. Revisão Espaçada (Spaced Review)</h4>
-                <p>Use os botões de arquivo inferior para enviar cartões para:</p>
-                <ul>
-                    <li><strong>📅 Next Week:</strong> Para revisar na próxima semana.</li>
-                    <li><strong>🗓️ Next Month:</strong> Para revisar no próximo mês.</li>
-                    <li><strong>🔄 From Time to Time:</strong> Para revisões esporádicas.</li>
-                </ul>
-            </div>
-
-            <div class="manual-section">
-                <h4>💡 Dicas de Ouro para Estudos Eficientes</h4>
-                <ul>
-                    <li><strong>Seja Direto na Frente:</strong> Coloque apenas uma palavra ou expressão curta.</li>
-                    <li><strong>Contextualize:</strong> Adicione frases reais de filmes, livros ou textos.</li>
-                    <li><strong>Use Imagens:</strong> Ajudam na memorização visual rápida.</li>
-                </ul>
-            </div>
-
-            <div class="manual-section">
-                <h4>🧠 O Poder da Repetição Espaçada: O que a Ciência aponta</h4>
-                <p>A Repetição Espaçada é comprovada pela psicologia cognitiva e neurociência:</p>
-                <ul>
-                    <li><strong>Curva do Esquecimento de Ebbinghaus:</strong> O cérebro descarta informações se não revisitadas. A repetição reinicia a curva e fortalece conexões neurais.</li>
-                    <li><strong>Spacing Effect:</strong> Distribuir sessões ao longo do tempo supera drasticamente o estudo concentrado de última hora.</li>
-                    <li><strong>Recuperação Ativa:</strong> O esforço do cérebro para resgatar a resposta ao virar o cartão torna o aprendizado sólido.</li>
+                    <li><strong>📅 Next Week:</strong> Revisar na próxima semana.</li>
+                    <li><strong>🗓️ Next Month:</strong> Revisar no próximo mês.</li>
+                    <li><strong>🔄 From Time to Time:</strong> Revisões esporádicas.</li>
                 </ul>
             </div>
         </div>
@@ -931,8 +888,7 @@
             timeToTime: []
         };
 
-        let currentDeckKey = null;
-        let isReviewDeck = false;
+        let currentDeckKey = 'dailyReview';
         let currentIndex = 0;
         let showingBack = false;
         let editingIndex = null;
@@ -951,6 +907,7 @@
         const cardContent = document.getElementById("cardContent");
         const imageContainer = document.getElementById("imageContainer");
         const cardCounter = document.getElementById("cardCounter");
+        const actionBoxContainer = document.getElementById("actionBoxContainer");
         
         const newMovieNameInput = document.getElementById("newMovieNameInput");
         const newFrontInput = document.getElementById("newFront");
@@ -1082,17 +1039,6 @@
                         timeToTime: Array.isArray(data.timeToTime) ? data.timeToTime : []
                     };
 
-                    if (!currentDeckKey && decks.movies.length > 0) {
-                        currentDeckKey = decks.movies[0].id;
-                        isReviewDeck = false;
-                    } else if (!isReviewDeck && currentDeckKey && !decks.movies.some(m => m.id === currentDeckKey)) {
-                        if (decks.movies.length > 0) {
-                            currentDeckKey = decks.movies[0].id;
-                        } else {
-                            currentDeckKey = null;
-                        }
-                    }
-
                     renderMenus();
                     updateView();
                     isSyncingFromCloud = false;
@@ -1132,32 +1078,65 @@
             movieDecksContainer.innerHTML = "";
             cardMovieSelect.innerHTML = "";
 
+            let movieOptGroup = document.createElement("optgroup");
+            movieOptGroup.label = "📚 Temas Principais (Daily Review)";
+            
             if (decks.movies.length === 0) {
-                cardMovieSelect.innerHTML = `<option value="">No theme registered</option>`;
+                const opt = document.createElement("option");
+                opt.value = "";
+                opt.innerText = "No theme registered";
+                movieOptGroup.appendChild(opt);
             } else {
                 decks.movies.forEach(movie => {
                     const opt = document.createElement("option");
                     opt.value = movie.id;
                     opt.innerText = movie.name;
-                    cardMovieSelect.appendChild(opt);
+                    movieOptGroup.appendChild(opt);
                 });
             }
+            cardMovieSelect.appendChild(movieOptGroup);
+
+            let reviewOptGroup = document.createElement("optgroup");
+            reviewOptGroup.label = "📅 Pastas de Revisão de Longo Prazo";
+            
+            const reviewDecksList = [
+                { id: 'nextWeek', name: '📅 Next Week' },
+                { id: 'nextMonth', name: '🗓️ Next Month' },
+                { id: 'timeToTime', name: '🔄 From Time to Time' }
+            ];
+
+            reviewDecksList.forEach(rev => {
+                const opt = document.createElement("option");
+                opt.value = rev.id;
+                opt.innerText = rev.name;
+                reviewOptGroup.appendChild(opt);
+            });
+            cardMovieSelect.appendChild(reviewOptGroup);
 
             decks.movies.forEach(movie => {
                 const btn = document.createElement("button");
                 btn.id = `tab-${movie.id}`;
                 btn.innerText = `📁 ${movie.name}`;
                 btn.onclick = () => switchMovieDeck(movie.id);
-                if (!isReviewDeck && currentDeckKey === movie.id) {
+                if (currentDeckKey === movie.id) {
                     btn.classList.add("active");
                 }
                 movieDecksContainer.appendChild(btn);
             });
 
+            const dailyBtn = document.getElementById('tab-dailyReview');
+            if (dailyBtn) {
+                if (currentDeckKey === 'dailyReview') {
+                    dailyBtn.classList.add("active");
+                } else {
+                    dailyBtn.classList.remove("active");
+                }
+            }
+
             ['nextWeek', 'nextMonth', 'timeToTime'].forEach(key => {
                 const tabBtn = document.getElementById('tab-' + key);
                 if (tabBtn) {
-                    if (isReviewDeck && currentDeckKey === key) {
+                    if (currentDeckKey === key) {
                         tabBtn.classList.add("active");
                     } else {
                         tabBtn.classList.remove("active");
@@ -1165,13 +1144,21 @@
                 }
             });
 
-            if (!isReviewDeck && currentDeckKey) {
+            if (currentDeckKey && currentDeckKey !== 'dailyReview' && cardMovieSelect.querySelector(`option[value="${currentDeckKey}"]`)) {
                 cardMovieSelect.value = currentDeckKey;
             }
         }
 
+        function switchDailyReview() {
+            currentDeckKey = 'dailyReview';
+            currentIndex = 0;
+            showingBack = false;
+            cancelEdit();
+            renderMenus();
+            updateView();
+        }
+
         function switchMovieDeck(movieId) {
-            isReviewDeck = false;
             currentDeckKey = movieId;
             currentIndex = 0;
             showingBack = false;
@@ -1181,7 +1168,6 @@
         }
 
         function switchDeck(deckKey) {
-            isReviewDeck = true;
             currentDeckKey = deckKey;
             currentIndex = 0;
             showingBack = false;
@@ -1191,8 +1177,16 @@
         }
 
         function getActiveCardsList() {
-            if (isReviewDeck) {
-                return currentDeckKey ? decks[currentDeckKey] : [];
+            if (currentDeckKey === 'dailyReview') {
+                let allCards = [];
+                decks.movies.forEach(movie => {
+                    if (Array.isArray(movie.cards)) {
+                        allCards.push(...movie.cards);
+                    }
+                });
+                return allCards;
+            } else if (['nextWeek', 'nextMonth', 'timeToTime'].includes(currentDeckKey)) {
+                return decks[currentDeckKey] || [];
             } else {
                 const movie = decks.movies.find(m => m.id === currentDeckKey);
                 return movie ? movie.cards : [];
@@ -1214,9 +1208,28 @@
             card.classList.remove("show-back");
             showingBack = false;
 
-            if (!currentDeckKey || activeList.length === 0) {
+            // Renderiza painel de botões inferiores dinâmico (Arquivo vs Restauração)
+            if (['nextWeek', 'nextMonth', 'timeToTime'].includes(currentDeckKey)) {
+                actionBoxContainer.innerHTML = `
+                    <div style="font-size: 11px; font-weight: bold; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">☀️ Trazer cartão de volta para a Revisão Diária:</div>
+                    <div class="action-row">
+                        <button class="btn-restore" onclick="restoreCardToDaily()">☀️ Voltar para Daily Review (Primeiro Tema)</button>
+                    </div>
+                `;
+            } else {
+                actionBoxContainer.innerHTML = `
+                    <div style="font-size: 11px; font-weight: bold; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">📁 Mover cartão para Revisão de Longo Prazo:</div>
+                    <div class="action-row" id="archiveButtons">
+                        <button class="btn-archive" onclick="moveToDeck('nextWeek')">📅 Next Week</button>
+                        <button class="btn-archive" onclick="moveToDeck('nextMonth')">🗓️ Next Month</button>
+                        <button class="btn-archive" onclick="moveToDeck('timeToTime')">🔄 From Time to Time</button>
+                    </div>
+                `;
+            }
+
+            if (activeList.length === 0) {
                 cardTag.innerText = "Empty Deck";
-                cardContent.innerHTML = "<span class='empty-state'>Register a theme and add flashcards to begin!</span>";
+                cardContent.innerHTML = "<span class='empty-state'>Nenhum cartão encontrado nesta seção. Cadastre um novo tema e adicione flashcards!</span>";
                 imageContainer.innerHTML = "";
                 cardCounter.innerText = "Card 0 of 0";
                 return;
@@ -1238,8 +1251,16 @@
                 imageContainer.innerHTML = "";
             }
 
-            let deckNameLabel = currentDeckKey.toUpperCase();
-            if (!isReviewDeck) {
+            let deckNameLabel = "DAILY REVIEW";
+            if (currentDeckKey === 'dailyReview') {
+                deckNameLabel = "Daily Review";
+            } else if (currentDeckKey === 'nextWeek') {
+                deckNameLabel = "Next Week";
+            } else if (currentDeckKey === 'nextMonth') {
+                deckNameLabel = "Next Month";
+            } else if (currentDeckKey === 'timeToTime') {
+                deckNameLabel = "From Time to Time";
+            } else {
                 const mov = decks.movies.find(m => m.id === currentDeckKey);
                 deckNameLabel = mov ? mov.name : "THEME";
             }
@@ -1376,10 +1397,61 @@
             let activeList = getActiveCardsList();
             if (activeList.length === 0) return;
 
-            let cardToMove = activeList.splice(currentIndex, 1)[0];
+            let cardToMove;
+
+            if (currentDeckKey === 'dailyReview') {
+                let countSoFar = 0;
+                let removed = false;
+                for (let movie of decks.movies) {
+                    if (Array.isArray(movie.cards)) {
+                        if (currentIndex >= countSoFar && currentIndex < countSoFar + movie.cards.length) {
+                            let localIdx = currentIndex - countSoFar;
+                            cardToMove = movie.cards.splice(localIdx, 1)[0];
+                            removed = true;
+                            break;
+                        }
+                        countSoFar += movie.cards.length;
+                    }
+                }
+                if (!removed) return;
+            } else if (['nextWeek', 'nextMonth', 'timeToTime'].includes(currentDeckKey)) {
+                cardToMove = decks[currentDeckKey].splice(currentIndex, 1)[0];
+            } else {
+                const movie = decks.movies.find(m => m.id === currentDeckKey);
+                if (movie && movie.cards) {
+                    cardToMove = movie.cards.splice(currentIndex, 1)[0];
+                }
+            }
+
             decks[targetDeckKey].push(cardToMove);
 
-            if (currentIndex >= activeList.length && currentIndex > 0) {
+            if (currentIndex >= getActiveCardsList().length && currentIndex > 0) {
+                currentIndex--;
+            }
+
+            saveToCloud();
+            updateView();
+        }
+
+        function restoreCardToDaily() {
+            let activeList = getActiveCardsList();
+            if (activeList.length === 0) return;
+
+            // Retira o cartão da pasta de longo prazo atual
+            let cardToMove = decks[currentDeckKey].splice(currentIndex, 1)[0];
+
+            // Joga de volta para o primeiro tema disponível (ou cria um tema padrão se não houver nenhum)
+            if (decks.movies.length > 0) {
+                decks.movies[0].cards.push(cardToMove);
+            } else {
+                decks.movies.push({
+                    id: 'geral',
+                    name: 'Geral',
+                    cards: [cardToMove]
+                });
+            }
+
+            if (currentIndex >= getActiveCardsList().length && currentIndex > 0) {
                 currentIndex--;
             }
 
@@ -1412,7 +1484,7 @@
 
             newImageInput.value = currentCard.image || "";
 
-            if (!isReviewDeck) {
+            if (currentDeckKey !== 'dailyReview') {
                 cardMovieSelect.value = currentDeckKey;
             }
 
@@ -1460,15 +1532,15 @@
             const correctVal = parseInt(correctOptionSelect.value);
             const imageVal = newImageInput.value.trim();
             
-            let selectedMovieId = cardMovieSelect.value;
+            let selectedDestination = cardMovieSelect.value;
 
             if (frontVal === "" || backVal === "") {
                 alert("Please fill in at least the Front and Back Explanation!");
                 return;
             }
 
-            if (!selectedMovieId) {
-                alert("Please select or create a theme before saving the card!");
+            if (!selectedDestination) {
+                alert("Please select a valid destination!");
                 return;
             }
 
@@ -1482,34 +1554,56 @@
             };
 
             if (editingIndex !== null) {
-                let activeList = getActiveCardsList();
-                
-                // Remove da lista atual (seja ela revisão ou outro deck)
-                activeList.splice(editingIndex, 1);
+                if (currentDeckKey === 'dailyReview') {
+                    let countSoFar = 0;
+                    for (let movie of decks.movies) {
+                        if (Array.isArray(movie.cards)) {
+                            if (editingIndex >= countSoFar && editingIndex < countSoFar + movie.cards.length) {
+                                movie.cards.splice(editingIndex - countSoFar, 1);
+                                break;
+                            }
+                            countSoFar += movie.cards.length;
+                        }
+                    }
+                } else if (['nextWeek', 'nextMonth', 'timeToTime'].includes(currentDeckKey)) {
+                    decks[currentDeckKey].splice(editingIndex, 1);
+                } else {
+                    const movie = decks.movies.find(m => m.id === currentDeckKey);
+                    if (movie && movie.cards) {
+                        movie.cards.splice(editingIndex, 1);
+                    }
+                }
 
-                // Adiciona no novo deck selecionado no menu suspenso
-                const targetMovie = decks.movies.find(m => m.id === selectedMovieId);
+                const targetMovie = decks.movies.find(m => m.id === selectedDestination);
                 if (targetMovie) {
                     if (!Array.isArray(targetMovie.cards)) {
                         targetMovie.cards = [];
                     }
                     targetMovie.cards.push(cardData);
+                    switchMovieDeck(selectedDestination);
+                } else if (decks[selectedDestination]) {
+                    decks[selectedDestination].push(cardData);
+                    switchDeck(selectedDestination);
                 }
 
                 cancelEdit();
                 saveToCloud();
-                
-                // Volta para a visualização do tema de destino
-                switchMovieDeck(selectedMovieId);
             } else {
-                const movie = decks.movies.find(m => m.id === selectedMovieId);
+                const movie = decks.movies.find(m => m.id === selectedDestination);
                 if (movie) {
                     if (!Array.isArray(movie.cards)) {
                         movie.cards = [];
                     }
                     movie.cards.push(cardData);
-                    switchMovieDeck(selectedMovieId);
+                    switchMovieDeck(selectedDestination);
                     currentIndex = movie.cards.length - 1;
+                    saveToCloud();
+                    updateView();
+                    cancelEdit();
+                } else if (decks[selectedDestination]) {
+                    decks[selectedDestination].push(cardData);
+                    switchDeck(selectedDestination);
+                    currentIndex = decks[selectedDestination].length - 1;
                     saveToCloud();
                     updateView();
                     cancelEdit();
