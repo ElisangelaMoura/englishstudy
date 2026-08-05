@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>English Flashcards - Private Cloud Edition</title>
     
-    <!-- Ícones para a tela inicial do celular -->
     <link rel="apple-touch-icon" href="https://confetticampus.fr/wp-content/uploads/2026/01/Retro-A6-lined-blue-768x768.jpg">
     <link rel="icon" type="image/png" href="https://confetticampus.fr/wp-content/uploads/2026/01/Retro-A6-lined-blue-768x768.jpg">
     
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -27,7 +25,6 @@
             min-height: 100vh;
         }
 
-        /* Tooltip Interativo no Verso */
         .hover-translate {
             position: relative;
             border-bottom: 1px dashed rgba(255, 255, 255, 0.7);
@@ -57,7 +54,6 @@
             opacity: 1;
         }
 
-        /* Tela de Login / Cadastro */
         #login-screen {
             display: flex;
             flex-direction: column;
@@ -130,7 +126,6 @@
             font-weight: bold;
         }
 
-        /* Conteúdo Principal (Oculto até logar) */
         #app-content {
             display: none;
             width: 100%;
@@ -138,7 +133,6 @@
             align-items: center;
         }
 
-        /* Barra de Usuário */
         .user-bar {
             width: 100%;
             max-width: 900px;
@@ -708,7 +702,6 @@
 </head>
 <body>
 
-    <!-- TELA DE LOGIN -->
     <div id="login-screen">
         <div class="login-card">
             <h2>English Flashcards 🎬</h2>
@@ -722,7 +715,6 @@
         </div>
     </div>
 
-    <!-- CONTEÚDO PRINCIPAL -->
     <div id="app-content">
         <div class="user-bar">
             <div class="user-profile-info">
@@ -777,6 +769,7 @@
                     </div>
                 </div>
                 <div class="management-box collapsed" id="managementBox">
+                    <label style="font-size: 11px; font-weight: bold; color: #475569;">Target Theme Deck:</label>
                     <select id="cardMovieSelect"></select>
                     <input type="text" id="newFront" placeholder="Front (Word or Free Example)...">
                     <textarea id="newBack" rows="2" placeholder="Back explanation..."></textarea>
@@ -813,7 +806,6 @@
                     <div id="imageContainer" style="width: 100%;"></div>
                 </div>
 
-                <!-- Botões de navegação (Previous / Next) -->
                 <div class="controls">
                     <button onclick="prevCard(event)">Previous</button>
                     <button onclick="nextCard(event)">Next</button>
@@ -823,7 +815,6 @@
                     <button class="btn-edit" onclick="loadCardForEditing()">✏️ Edit Current Card</button>
                 </div>
 
-                <!-- Área separada e clara para os botões de envio/espaçamento -->
                 <div style="width: 100%; max-width: 440px; margin-top: 14px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
                     <div style="font-size: 11px; font-weight: bold; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">📁 Mover cartão para Revisão Espaçada:</div>
                     <div class="action-row" id="archiveButtons">
@@ -837,7 +828,6 @@
         </div>
     </div>
 
-   <!-- Manual Modal -->
     <div class="modal-overlay" id="manualModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeManual()">✕</button>
@@ -1428,7 +1418,7 @@
 
             editingIndex = currentIndex;
             formTitle.innerText = "✏️ Editing Card";
-            saveBtn.innerText = "Update";
+            saveBtn.innerText = "Update & Move";
             saveBtn.classList.add("edit-mode");
             cancelEditBtn.style.display = "block";
 
@@ -1470,14 +1460,14 @@
             const correctVal = parseInt(correctOptionSelect.value);
             const imageVal = newImageInput.value.trim();
             
-            let selectedMovieId = (!isReviewDeck && currentDeckKey) ? currentDeckKey : cardMovieSelect.value;
+            let selectedMovieId = cardMovieSelect.value;
 
             if (frontVal === "" || backVal === "") {
                 alert("Please fill in at least the Front and Back Explanation!");
                 return;
             }
 
-            if (!selectedMovieId && editingIndex === null) {
+            if (!selectedMovieId) {
                 alert("Please select or create a theme before saving the card!");
                 return;
             }
@@ -1493,10 +1483,24 @@
 
             if (editingIndex !== null) {
                 let activeList = getActiveCardsList();
-                activeList[editingIndex] = cardData;
+                
+                // Remove da lista atual (seja ela revisão ou outro deck)
+                activeList.splice(editingIndex, 1);
+
+                // Adiciona no novo deck selecionado no menu suspenso
+                const targetMovie = decks.movies.find(m => m.id === selectedMovieId);
+                if (targetMovie) {
+                    if (!Array.isArray(targetMovie.cards)) {
+                        targetMovie.cards = [];
+                    }
+                    targetMovie.cards.push(cardData);
+                }
+
                 cancelEdit();
                 saveToCloud();
-                updateView();
+                
+                // Volta para a visualização do tema de destino
+                switchMovieDeck(selectedMovieId);
             } else {
                 const movie = decks.movies.find(m => m.id === selectedMovieId);
                 if (movie) {
