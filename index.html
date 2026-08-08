@@ -1254,7 +1254,14 @@
             card.classList.remove("show-back");
             showingBack = false;
 
-            if (['nextWeek', 'nextMonth', 'timeToTime'].includes(currentDeckKey)) {
+            if (currentDeckKey === 'dailyReview') {
+                actionBoxContainer.innerHTML = `
+                    <div style="font-size: 11px; font-weight: bold; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">↩️ Organizar Cartão (Daily Review):</div>
+                    <div class="action-row">
+                        <button class="btn-restore" onclick="returnCardToOrigin()" style="background-color: #2563eb;">↩️ Mover para o Deck de Origem</button>
+                    </div>
+                `;
+            } else if (['nextWeek', 'nextMonth', 'timeToTime'].includes(currentDeckKey)) {
                 actionBoxContainer.innerHTML = `
                     <div style="font-size: 11px; font-weight: bold; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">☀️ Trazer cartão de volta para a Revisão Diária:</div>
                     <div class="action-row">
@@ -1500,6 +1507,46 @@
 
             saveToCloud();
             updateView();
+        }
+
+        function returnCardToOrigin() {
+            if (currentDeckKey !== 'dailyReview') return;
+            
+            let countSoFar = 0;
+            let targetMovieObj = null;
+            let localIdx = 0;
+
+            for (let movie of decks.movies) {
+                if (Array.isArray(movie.cards)) {
+                    if (currentIndex >= countSoFar && currentIndex < countSoFar + movie.cards.length) {
+                        targetMovieObj = movie;
+                        localIdx = currentIndex - countSoFar;
+                        break;
+                    }
+                    countSoFar += movie.cards.length;
+                }
+            }
+
+            if (!targetMovieObj) return;
+
+            // Pergunta o nome do deck de destino para mover de volta (ou envia para o deck ao qual o cartão pertencia estruturalmente)
+            let originName = prompt(`Este cartão pertence atualmente ao tema "${targetMovieObj.name}". Deseja mover para qual outro tema existente? Deixe em branco para manter ou digite o nome exato do deck de origem:`, "");
+            
+            if (originName !== null && originName.trim() !== "") {
+                let foundDest = decks.movies.find(m => m.name.toLowerCase() === originName.trim().toLowerCase() || m.id === originName.trim().toLowerCase());
+                if (foundDest && foundDest.id !== targetMovieObj.id) {
+                    let cardToMove = targetMovieObj.cards.splice(localIdx, 1)[0];
+                    foundDest.cards.push(cardToMove);
+                    if (currentIndex >= getActiveCardsList().length && currentIndex > 0) {
+                        currentIndex--;
+                    }
+                    saveToCloud();
+                    updateView();
+                    alert(`Cartão movido com sucesso para o tema "${foundDest.name}"!`);
+                } else if (!foundDest) {
+                    alert("Tema de destino não encontrado. Verifique se o nome está correto.");
+                }
+            }
         }
 
         function loadCardForEditing() {
